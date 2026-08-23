@@ -56,7 +56,7 @@ export function ProductForm({
     >
       <div>
         <p className="mb-2 text-sm font-semibold text-slate-900">Product photos</p>
-        <AdminImageUploader initial={form.images} />
+        <AdminImageUploader productId={product?.id} initial={form.images} />
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

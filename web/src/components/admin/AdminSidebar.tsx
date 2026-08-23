@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 
 const navGroups = [
   {
@@ -38,7 +39,7 @@ const navGroups = [
   },
 ];
 
-export function AdminSidebar() {
+export function AdminSidebar({ userEmail }: { userEmail: string }) {
   const pathname = usePathname();
 
   return (
@@ -79,10 +80,21 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="border-t border-white/10 px-5 py-4">
-        <Link href="/" className="text-xs font-medium text-slate-400 hover:text-white">
-          ← Back to storefront
-        </Link>
+      <div className="border-t border-white/10 space-y-3 px-5 py-4">
+        <div className="text-xs text-slate-500">
+          <p className="text-slate-400">{userEmail}</p>
+        </div>
+        <div className="space-y-2">
+          <Link href="/" className="block text-xs font-medium text-slate-400 hover:text-white">
+            ← Back to storefront
+          </Link>
+          <button
+            onClick={() => signOut({ callbackUrl: "/admin/login" })}
+            className="block w-full text-left text-xs font-medium text-slate-400 hover:text-white"
+          >
+            Sign out →
+          </button>
+        </div>
       </div>
     </aside>
   );

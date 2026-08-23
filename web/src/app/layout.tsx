@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart-context";
+import { AuthSessionProvider } from "@/components/providers/AuthSessionProvider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className={`${poppins.variable} bg-imt-bg font-sans text-slate-900 antialiased`}>
-        <CartProvider>{children}</CartProvider>
+        <AuthSessionProvider>
+          <CartProvider>{children}</CartProvider>
+        </AuthSessionProvider>
       </body>
     </html>
   );

@@ -45,7 +45,7 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
           {order.email || "your email"} and our team will call you within 2 hours to confirm the {isPickup ? "installation slot" : "delivery details"}.
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
-          <Button variant="primary">🚚 Track this order</Button>
+          <WhatsAppButton order={order} />
           <Button variant="outline">⬇ Download invoice</Button>
         </div>
       </div>
@@ -130,6 +130,18 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
         </div>
       </div>
     </div>
+  );
+}
+
+function WhatsAppButton({ order }: { order: Order }) {
+  const itemsText = order.items.map(item => `${item.qty}x ${item.name}`).join(", ");
+  const message = `Hi, my order number is ${order.orderNumber}. I would like to order: ${itemsText}. Total: LKR ${order.total}`;
+  const whatsappLink = `https://wa.me/94766644460?text=${encodeURIComponent(message)}`;
+  
+  return (
+    <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-green-600 transition-colors">
+      💬 Continue to WhatsApp
+    </a>
   );
 }
 

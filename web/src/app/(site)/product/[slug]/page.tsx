@@ -39,7 +39,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-          <ProductGallery productName={product.name} />
+          <ProductGallery productName={product.name} images={product.images} />
 
           <div>
             <div className="flex items-center justify-between">
