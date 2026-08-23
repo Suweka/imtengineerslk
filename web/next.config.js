@@ -10,10 +10,6 @@ const nextConfig = {
       },
     ],
   },
-  experimental: {
-    // Enable OpenNext Cloudflare adapter
-    outputFileTracing: true,
-  },
 };
 
 module.exports = nextConfig;
