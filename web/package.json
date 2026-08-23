@@ -12,7 +12,7 @@
     "db:seed": "dotenv -e .env.local -- tsx prisma/seed.ts",
     "db:studio": "dotenv -e .env.local -- prisma studio",
     "build:cf": "next build && npx @opennextjs/cloudflare",
-    "deploy:cf": "wrangler deploy"
+    "deploy:cf": "npm run build:cf && wrangler pages deploy .open-next/assets"
   },
   "prisma": {
     "seed": "dotenv -e .env.local -- tsx prisma/seed.ts"
