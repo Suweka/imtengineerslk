@@ -1,23 +1,7 @@
-name = "imt-engineers"
-type = "service"
-main = "dist/index.js"
+name = "imtengineers"
 compatibility_date = "2026-01-01"
 compatibility_flags = ["nodejs_compat"]
-
-[env.production]
-route = "imtengineers.lk/*"
-
-[env.staging]
-route = "staging.imtengineers.lk/*"
 
 # Environment variables (non-secret; secrets go in Cloudflare dashboard)
 [vars]
 NEXTAUTH_URL = "https://imtengineers.lk"
-
-# Triggers to rebuild on file changes
-[triggers.crons]
-crons = ["0 0 * * *"]  # Daily rebuild check
-
-# Analytics Engine
-[analytics]
-enabled = true
