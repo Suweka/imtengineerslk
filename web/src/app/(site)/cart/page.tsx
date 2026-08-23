@@ -27,7 +27,7 @@ export default function CartPage() {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-extrabold text-slate-900">
         Shopping Cart <span className="ml-2 text-base font-normal text-slate-400">{items.length} items</span>
       </h1>

@@ -98,10 +98,10 @@ export const secureItems: Item[] = [
 export function InfoBar({ items, tone = "light" }: { items: Item[]; tone?: "light" | "dark" }) {
   return (
     <div className={tone === "dark" ? "bg-imt-navy text-white" : "bg-imt-bg text-slate-900"}>
-      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-6 sm:grid-cols-4 sm:px-6">
+      <div className="mx-auto grid max-w-[1600px] grid-cols-2 gap-6 px-4 py-6 sm:grid-cols-4 sm:px-6">
         {items.map((item) => (
           <div key={item.title} className="flex items-center gap-3">
-            <span className={tone === "dark" ? "text-imt-gold-end" : "text-imt-blue"}>{item.icon}</span>
+            <span className={tone === "dark" ? "text-white" : "text-imt-blue"}>{item.icon}</span>
             <div>
               <div className="text-sm font-bold">{item.title}</div>
               <div className={`text-xs ${tone === "dark" ? "text-slate-300" : "text-slate-500"}`}>{item.subtitle}</div>

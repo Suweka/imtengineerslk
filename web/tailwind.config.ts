@@ -26,10 +26,34 @@ const config: Config = {
           "linear-gradient(90deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.82) 34%,rgba(255,255,255,0) 56%)",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["var(--font-poppins)", "system-ui", "sans-serif"],
       },
       boxShadow: {
         "product-frame": "0 2px 8px rgba(0, 0, 0, 0.05)",
+      },
+      keyframes: {
+        fadeInUp: {
+          "0%": { opacity: "0", transform: "translateY(18px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        fadeIn: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        scaleIn: {
+          "0%": { opacity: "0", transform: "scale(0.94)" },
+          "100%": { opacity: "1", transform: "scale(1)" },
+        },
+        bump: {
+          "0%, 100%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.25)" },
+        },
+      },
+      animation: {
+        "fade-in-up": "fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) both",
+        "fade-in": "fadeIn 0.6s ease-out both",
+        "scale-in": "scaleIn 0.5s cubic-bezier(0.16,1,0.3,1) both",
+        bump: "bump 0.35s ease-out",
       },
     },
   },

@@ -1,55 +1,65 @@
 import { ButtonLink } from "@/components/ui/Button";
+import { Icon } from "@/components/ui/Icon";
 
 const heroCards = [
-  { icon: <TruckIcon />, title: "Free Delivery", sub: "Islandwide" },
-  { icon: <ShieldIcon />, title: "2 Year Warranty", sub: "On All Products" },
-  { icon: <WrenchIcon />, title: "Professional Install", sub: "Islandwide Service" },
+  { icon: "local_shipping", title: "Free Delivery", sub: "Islandwide" },
+  { icon: "verified_user", title: "2 Year Warranty", sub: "On All Products" },
+  { icon: "build", title: "Professional Install", sub: "Islandwide Service" },
 ];
 
 export function Hero() {
   return (
     <>
-      <section
-        className="relative bg-[#DCEAF3] bg-cover bg-center bg-no-repeat lg:h-[430px]"
-        style={{ backgroundImage: "url('/home-hero.png')" }}
-      >
-        <div className="absolute inset-0 bg-white/90 lg:bg-transparent lg:bg-hero-fade" />
-        <div className="relative mx-auto h-full max-w-7xl px-4 sm:px-6 lg:flex lg:h-full lg:items-center">
-          <div className="max-w-[470px] py-8 lg:py-0">
-            <p className="mb-3.5 text-[13px] font-semibold lg:text-base">
+      <section className="relative bg-[#F7F9FC] lg:h-[430px] lg:bg-[#DCEAF3]">
+        <div
+          className="absolute inset-0 hidden bg-cover bg-center bg-no-repeat lg:block"
+          style={{ backgroundImage: "url('/home-hero.png')" }}
+        />
+        <div className="absolute inset-0 hidden lg:block lg:bg-hero-fade" />
+        <div className="relative mx-auto h-full max-w-[1600px] px-4 sm:px-6 lg:flex lg:h-full lg:items-center">
+          <div className="max-w-[470px] py-8 lg:max-w-[700px] lg:py-0">
+            <p className="mb-3.5 animate-fade-in-up text-[13px] font-semibold opacity-0 lg:text-lg">
               <span className="text-imt-red">Stay Cool.</span> <span className="text-imt-blue">Stay Comfortable.</span>
             </p>
-            <h1 className="mb-3.5 text-[27px] font-semibold leading-[1.2] text-imt-navy lg:text-[44px] lg:leading-[1.14]">
+            <h1
+              className="mb-3.5 animate-fade-in-up text-[27px] font-semibold leading-[1.2] text-[#0F3E6B] opacity-0 [animation-delay:80ms] lg:whitespace-nowrap lg:text-[44px] lg:leading-[1.14]"
+            >
               Premium Air Conditioners
               <br />
-              <span className="text-[22px] font-normal text-slate-800 lg:text-[44px]">
+              <span className="text-[22px] font-normal text-[#1E2B36] lg:text-[44px]">
                 for Your Perfect Comfort
               </span>
             </h1>
-            <p className="mb-5 max-w-[470px] text-[12.5px] leading-[1.75] text-slate-500 lg:mb-[26px] lg:text-sm">
+            <p className="mb-5 max-w-[470px] animate-fade-in-up text-[13px] leading-[1.75] text-[#4A5A68] opacity-0 [animation-delay:160ms] lg:mb-[26px] lg:max-w-[600px] lg:text-sm lg:leading-[1.8]">
               Choose from the best brands with energy-efficient cooling, professional installation and
               reliable after-sales service.
             </p>
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href="/shop" size="lg" className="h-11 lg:h-[50px]">
-                Shop Now →
+            <div className="flex animate-fade-in-up flex-wrap gap-3 opacity-0 [animation-delay:240ms]">
+              <ButtonLink href="/shop" size="lg" className="h-11 px-6 text-base lg:h-[56px] lg:px-8 lg:text-lg">
+                Shop Now <Icon name="arrow_forward" size={20} />
               </ButtonLink>
-              <ButtonLink href="/shop?discount=true" size="lg" variant="outline" className="h-11 lg:h-[50px]">
-                View Deals <TagIcon />
+              <ButtonLink
+                href="/shop?discount=true"
+                size="lg"
+                variant="outline"
+                className="h-11 px-6 text-base lg:h-[56px] lg:px-8 lg:text-lg"
+              >
+                View Deals <Icon name="sell" size={18} />
               </ButtonLink>
             </div>
           </div>
 
           <div className="absolute right-4 top-10 hidden flex-col gap-3.5 sm:right-6 xl:flex">
-            {heroCards.map((c) => (
+            {heroCards.map((c, i) => (
               <div
                 key={c.title}
-                className="flex min-w-[196px] items-center gap-3 rounded-[10px] bg-white py-3.5 pl-4 pr-[22px] shadow-lg"
+                className="flex min-w-[196px] animate-scale-in items-center gap-3 rounded-[10px] bg-white py-3.5 pl-4 pr-[22px] opacity-0 shadow-lg transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+                style={{ animationDelay: `${300 + i * 100}ms` }}
               >
-                <span className="text-imt-blue">{c.icon}</span>
+                <Icon name={c.icon} className="text-imt-blue" size={22} />
                 <div>
-                  <div className="text-[13px] font-semibold text-imt-navy">{c.title}</div>
-                  <div className="mt-0.5 text-[11.5px] text-slate-500">{c.sub}</div>
+                  <div className="text-[13.5px] font-medium leading-[1.5] text-[#172B3A]">{c.title}</div>
+                  <div className="mt-0.5 text-[11.5px] text-[#6B7A88]">{c.sub}</div>
                 </div>
               </div>
             ))}
@@ -63,38 +73,5 @@ export function Hero() {
         style={{ backgroundImage: "url('/home-hero.png')", backgroundPosition: "62% 50%" }}
       />
     </>
-  );
-}
-
-function TagIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M20.59 13.41L11 3.83A2 2 0 009.59 3.24H4a1 1 0 00-1 1v5.59a2 2 0 00.59 1.41l9.59 9.59a2 2 0 002.82 0l4.59-4.59a2 2 0 000-2.83z" />
-      <circle cx="7.5" cy="7.5" r="1.5" />
-    </svg>
-  );
-}
-function TruckIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M3 16V6a1 1 0 011-1h9v11" />
-      <path d="M13 9h4l4 4v3h-8" />
-      <circle cx="7.5" cy="18.5" r="1.5" />
-      <circle cx="17.5" cy="18.5" r="1.5" />
-    </svg>
-  );
-}
-function ShieldIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-    </svg>
-  );
-}
-function WrenchIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94z" />
-    </svg>
   );
 }

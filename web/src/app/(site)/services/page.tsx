@@ -7,7 +7,7 @@ export const metadata = { title: "Services | IMT Engineers" };
 export default function ServicesPage() {
   return (
     <>
-      <section className="mx-auto max-w-7xl px-4 py-12 text-center sm:px-6">
+      <section className="mx-auto max-w-[1600px] px-4 py-12 text-center sm:px-6">
         <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Services &amp; AMC</p>
         <h1 className="mt-2 text-3xl font-extrabold text-slate-900">Keep your units running at their best</h1>
         <p className="mx-auto mt-2 max-w-xl text-sm text-slate-500">

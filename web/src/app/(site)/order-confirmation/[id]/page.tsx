@@ -34,7 +34,7 @@ export default function OrderConfirmationPage({ params }: { params: { id: string
   heldUntil.setDate(heldUntil.getDate() + 5);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6">
       <div className="text-center">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-3xl text-emerald-600">✓</div>
         <h1 className="mt-4 text-2xl font-extrabold text-slate-900 sm:text-3xl">

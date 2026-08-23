@@ -32,12 +32,12 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
   return (
     <>
-      <div className="mx-auto max-w-7xl px-4 pt-4 text-xs text-slate-500 sm:px-6">
+      <div className="mx-auto max-w-[1600px] px-4 pt-4 text-xs text-slate-500 sm:px-6">
         <Link href="/">Home</Link> › <Link href="/shop">Shop</Link> ›{" "}
         {category && <Link href={`/shop/${category.slug}`}>{category.name}</Link>} › {product.name}
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6">
+      <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           <ProductGallery productName={product.name} />
 
@@ -80,7 +80,7 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
       </div>
 
       <section className="bg-slate-50 py-14">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
           <div className="flex items-end justify-between">
             <h2 className="text-xl font-extrabold text-slate-900">Customers also viewed</h2>
             {category && (

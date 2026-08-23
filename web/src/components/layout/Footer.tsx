@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { categories } from "@/data/categories";
 import { siteSettings } from "@/data/testimonials";
@@ -5,15 +6,12 @@ import { siteSettings } from "@/data/testimonials";
 export function Footer() {
   return (
     <footer className="bg-imt-navy text-slate-300">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-4 py-12 sm:px-6 md:grid-cols-4">
+      <div className="mx-auto grid max-w-[1600px] grid-cols-1 gap-10 px-4 py-12 sm:px-6 md:grid-cols-4">
         <div>
-          <div className="mb-3 flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-imt-gold text-xs font-black text-imt-navy">
-              IMT
-            </span>
-            <span className="text-lg font-extrabold text-white">
-              IMT <span className="block text-[10px] font-semibold uppercase tracking-widest text-slate-400">Engineers</span>
-            </span>
+          <div className="mb-3 inline-flex rounded-md bg-white px-3 py-2">
+            <div className="relative h-8 w-[117px]">
+              <Image src="/logo.png" alt="IMT Engineers Logo" fill className="object-contain" />
+            </div>
           </div>
           <p className="text-sm leading-relaxed text-slate-400">
             Air conditioning sales, installation and after-sales service across Sri Lanka since {siteSettings.foundedYear}.
@@ -54,7 +52,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-slate-400 sm:flex-row sm:px-6">
+        <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-slate-400 sm:flex-row sm:px-6">
           <span>&copy; {new Date().getFullYear()} IMT Engineers (Pvt) Ltd. All rights reserved.</span>
           <div className="flex items-center gap-2">
             <span>Pay at store</span>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -43,13 +44,14 @@ export function AdminSidebar() {
   return (
     <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-imt-navy text-slate-300 lg:flex lg:flex-col">
       <div className="flex items-center gap-2 border-b border-white/10 px-5 py-5">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-imt-gold text-xs font-black text-imt-navy">
-          IMT
-        </span>
-        <div>
-          <div className="text-sm font-extrabold text-white">IMT Admin</div>
-          <div className="text-[10px] uppercase tracking-widest text-slate-400">Control Panel</div>
+        <div className="inline-flex rounded-md bg-white px-2.5 py-1.5">
+          <div className="relative h-7 w-[103px]">
+            <Image src="/logo.png" alt="IMT Engineers Logo" fill className="object-contain" />
+          </div>
         </div>
+      </div>
+      <div className="border-b border-white/10 px-5 py-2 text-[10px] uppercase tracking-widest text-slate-400">
+        Control Panel
       </div>
 
       <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">

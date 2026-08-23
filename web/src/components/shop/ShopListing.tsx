@@ -17,7 +17,7 @@ export function ShopListing({ title, products }: { title: string; products: Prod
   });
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-extrabold text-slate-900">{title}</h1>
       <p className="mt-1 text-sm text-slate-500">{products.length} products</p>
 

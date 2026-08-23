@@ -7,7 +7,7 @@ export const metadata = { title: "Brands | IMT Engineers" };
 
 export default function BrandsPage() {
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
+    <div className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6">
       <div className="text-center">
         <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Authorised Dealer</p>
         <h1 className="mt-2 text-3xl font-extrabold text-slate-900">Brands We Carry</h1>

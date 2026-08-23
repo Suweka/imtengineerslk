@@ -6,7 +6,7 @@ export function BestSellers() {
   const products = getBestSellers().slice(0, 4);
   return (
     <section className="bg-slate-50 py-14">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
         <div className="flex items-end justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-imt-red">This Month</p>

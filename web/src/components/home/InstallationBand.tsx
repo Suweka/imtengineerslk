@@ -11,7 +11,7 @@ const points = [
 
 export function InstallationBand() {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+    <section className="mx-auto max-w-[1600px] px-4 py-14 sm:px-6">
       <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
         <div>
           <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Installation &amp; Service</p>

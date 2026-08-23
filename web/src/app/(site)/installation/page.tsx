@@ -22,7 +22,7 @@ const faqs = [
 export default function InstallationPage() {
   return (
     <>
-      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6">
+      <section className="mx-auto max-w-[1600px] px-4 py-12 sm:px-6">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Installation &amp; Service</p>
@@ -45,7 +45,7 @@ export default function InstallationPage() {
       </section>
 
       <section className="bg-slate-50 py-14">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
           <h2 className="text-center text-2xl font-extrabold text-slate-900">How installation works</h2>
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((s, i) => (

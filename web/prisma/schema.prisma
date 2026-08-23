@@ -1,0 +1,138 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+}
+
+model Product {
+  id                 String        @id @default(cuid())
+  slug               String        @unique
+  name               String
+  brand              Brand         @relation(fields: [brandId], references: [id])
+  brandId            String
+  category           Category      @relation(fields: [categoryId], references: [id])
+  categoryId         String
+  capacityBTU        Int
+  capacityHP         Float
+  energyRating       String
+  acType             String // "inverter" | "non-inverter" | "dual-inverter"
+  refrigerant        String?
+  price              Decimal
+  discountPrice      Decimal?
+  warrantyParts      String
+  warrantyCompressor String
+  recommendedRoomSize String?
+  images             String[]
+  stock              Int           @default(0)
+  isFeatured         Boolean       @default(false)
+  isBestSeller       Boolean       @default(false)
+  isNew              Boolean       @default(false)
+  installationFee    Decimal       @default(0)
+  requiresSiteSurvey Boolean       @default(false)
+  description        String        @default("")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  productImages      ProductImage[]
+}
+
+model Brand {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  logoUrl  String?
+  products Product[]
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String    @unique
+  slug     String    @unique
+  fromPrice Decimal  @default(0)
+  products Product[]
+}
+
+model Order {
+  id                   String    @id @default(cuid())
+  orderNumber          String    @unique
+  items                Json
+  subtotal             Decimal
+  installationTotal    Decimal   @default(0)
+  total                Decimal
+  deliveryFee          Decimal   @default(0)
+  fulfillment          String // "delivery" | "showroom-pickup"
+  customerName         String
+  phone                String
+  email                String?
+  nicNumber            String?
+  address              String?
+  city                 String?
+  district             String?
+  preferredInstallDate DateTime?
+  notes                String?
+  whatsappStatus       String    @default("pending") // pending | sent | failed
+  status               String    @default("new") // new | contacted | confirmed | delivered_installed | cancelled
+  createdAt            DateTime  @default(now())
+}
+
+model ServiceRequest {
+  id             String    @id @default(cuid())
+  type           String
+  customerName   String
+  phone          String
+  address        String
+  preferredDate  DateTime?
+  status         String    @default("new")
+  whatsappStatus String    @default("pending")
+  createdAt      DateTime  @default(now())
+}
+
+model ProductImage {
+  id           String   @id @default(cuid())
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId    String
+  originalUrl  String
+  processedUrl String?
+  status       String   @default("pending") // pending | processed | failed
+  sortOrder    Int      @default(0)
+}
+
+model SiteSettings {
+  id                     Int      @id @default(1)
+  phone                  String
+  whatsapp               String
+  email                  String
+  headOfficeAddress      String
+  engineeringDeptAddress String
+  businessHours          Json
+  socialLinks            Json
+  freeDeliveryThreshold  Decimal
+  logoUrl                String?
+}
+
+model Testimonial {
+  id           String  @id @default(cuid())
+  customerName String
+  rating       Int
+  quote        String
+  isPublished  Boolean @default(false)
+  sortOrder    Int     @default(0)
+}
+
+model PageContent {
+  id        String   @id @default(cuid())
+  pageKey   String   @unique
+  title     String?
+  body      String
+  updatedAt DateTime @updatedAt
+}
