@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+/.pnp
+.pnp.js
+package-lock.json
+yarn.lock
+bun.lockb
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+*.db
+*.sqlite
+
+# Production
+/build
+/dist
+.open-next/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.production.local
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+.vscode-test
+
+# OS
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Prisma
+prisma/migrations/dev.db
+prisma/dev.db
+
+# Vercel
+.vercel/
+.vercel
+
+# Cloudflare
+.wrangler/
+wrangler.toml.backup
+
+# Local development
+.turbo/
+dist/
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+
+# Old project structures (cleanup)
+/web/
+imt-engineers-nextjs/
