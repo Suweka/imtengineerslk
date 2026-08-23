@@ -38,11 +38,11 @@ async function processBackgroundRemoval(imageId: string, originalUrl: string) {
 }
 
 // POST: new upload (multipart "file") or retry (JSON { imageId })
-export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const productId = params.id;
+  const { id: productId } = await params;
   const product = await prisma.product.findUnique({ where: { id: productId } });
   if (!product) return NextResponse.json({ error: "Product not found" }, { status: 404 });
 
@@ -96,11 +96,11 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 }
 
 // DELETE: remove an image (and its Cloudinary assets) so no orphaned rows/files remain.
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const productId = params.id;
+  const { id: productId } = await params;
   const { searchParams } = new URL(req.url);
   const imageId = searchParams.get("imageId");
   if (!imageId) return NextResponse.json({ error: "imageId is required" }, { status: 400 });
@@ -121,12 +121,13 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
 }
 
 // GET: list a product's images (used to hydrate the admin uploader on load).
-export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await requireAdmin();
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { id: productId } = await params;
   const images = await prisma.productImage.findMany({
-    where: { productId: params.id },
+    where: { productId },
     orderBy: { sortOrder: "asc" },
   });
   return NextResponse.json(images);
