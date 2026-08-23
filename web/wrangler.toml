@@ -1,9 +1,0 @@
-name = "imtengineers"
-type = "service"
-main = ".open-next/worker.js"
-compatibility_date = "2026-01-01"
-compatibility_flags = ["nodejs_compat"]
-
-# Environment variables (non-secret; secrets go in Cloudflare dashboard)
-[vars]
-NEXTAUTH_URL = "https://imtengineers.lk"
