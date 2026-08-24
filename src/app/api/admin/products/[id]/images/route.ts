@@ -20,9 +20,9 @@ async function syncProductImages(productId: string) {
   await prisma.product.update({ where: { id: productId }, data: { images: urls } });
 }
 
-async function processBackgroundRemoval(imageId: string, originalUrl: string) {
+async function processBackgroundRemoval(imageId: string, source: string | Buffer) {
   try {
-    const buffer = await removeBackground(originalUrl);
+    const buffer = await removeBackground(source);
     const processedUrl = await uploadImage(buffer, `${imageId}-processed`);
     return prisma.productImage.update({
       where: { id: imageId },
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
     data: { productId, originalUrl, status: "pending", sortOrder: count },
   });
 
-  const updated = await processBackgroundRemoval(created.id, originalUrl);
+  const updated = await processBackgroundRemoval(created.id, buffer);
   await syncProductImages(productId);
 
   return NextResponse.json(updated);

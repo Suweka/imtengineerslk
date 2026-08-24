@@ -143,7 +143,10 @@ export function AdminImageUploader({ productId, initial = [] }: { productId?: st
         accept="image/*"
         multiple
         className="hidden"
-        onChange={(e) => handleFiles(e.target.files)}
+        onChange={(e) => {
+          handleFiles(e.target.files);
+          e.target.value = "";
+        }}
       />
       <p className="mt-2 text-xs text-slate-400">
         Photos are automatically background-removed via remove.bg after upload. First image is used as the primary shop/catalog thumbnail.
