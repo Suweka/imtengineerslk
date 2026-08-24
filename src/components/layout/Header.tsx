@@ -57,13 +57,13 @@ export function Header() {
       }`}
     >
       <TopBar />
-      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
-        <div className="flex items-center gap-3">
+      <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-2 sm:px-6 sm:py-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <button className="text-slate-700 lg:hidden" aria-label="Menu" onClick={() => setMobileOpen((v) => !v)}>
-            <Icon name="menu" size={24} />
+            <Icon name="menu" size={22} />
           </button>
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-9 w-[132px] sm:h-11 sm:w-[161px]">
+            <div className="relative h-7 w-[102px] sm:h-11 sm:w-[161px]">
               <Image
                 src="/logo.png"
                 alt="IMT Engineers Logo"
@@ -115,9 +115,10 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           <button aria-label="Search" className="text-slate-600 hover:text-imt-blue">
-            <Icon name="search" size={20} />
+            <Icon name="search" size={19} className="sm:hidden" />
+            <Icon name="search" size={20} className="hidden sm:block" />
           </button>
           <Link href="/admin" aria-label="Account" className="hidden text-slate-600 hover:text-imt-blue sm:block">
             <Icon name="person" size={20} />
@@ -128,7 +129,8 @@ export function Header() {
               aria-label="Cart"
               className={`relative block text-slate-600 transition-colors hover:text-imt-blue ${cartBump ? "animate-bump" : ""}`}
             >
-              <Icon name="shopping_cart" size={22} />
+              <Icon name="shopping_cart" size={20} className="sm:hidden" />
+              <Icon name="shopping_cart" size={22} className="hidden sm:block" />
               {itemCount > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-imt-red text-[10px] font-bold text-white transition-transform">
                   {itemCount}
