@@ -1,16 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Brand } from "@/lib/types";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { Modal } from "@/components/admin/Modal";
 import { Button } from "@/components/ui/Button";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 
+type AdminBrand = {
+  id: string;
+  name: string;
+  slug: string;
+  logoUrl: string | null;
+};
+
 export default function AdminBrandsPage() {
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [brands, setBrands] = useState<AdminBrand[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState<Brand | null>(null);
+  const [editing, setEditing] = useState<AdminBrand | null>(null);
   const [creating, setCreating] = useState(false);
 
   useEffect(() => {
@@ -20,7 +26,7 @@ export default function AdminBrandsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  async function handleSave(brand: Brand) {
+  async function handleSave(brand: AdminBrand) {
     const exists = brands.some((b) => b.id === brand.id);
     const res = await fetch(exists ? `/api/admin/brands/${brand.id}` : "/api/admin/brands", {
       method: exists ? "PUT" : "POST",
@@ -64,7 +70,7 @@ export default function AdminBrandsPage() {
             <tbody>
               {brands.map((b) => (
                 <tr key={b.id} className="border-t border-slate-100">
-                  <td className="px-5 py-3"><ProductImageFrame alt={b.name} label={b.name} className="h-10 w-16" /></td>
+                  <td className="px-5 py-3"><ProductImageFrame src={b.logoUrl ?? undefined} alt={b.name} label={b.name} className="h-10 w-16" /></td>
                   <td className="px-5 py-3 font-medium text-slate-900">{b.name}</td>
                   <td className="px-5 py-3">
                     <div className="flex justify-end gap-3">
@@ -88,15 +94,16 @@ export default function AdminBrandsPage() {
   );
 }
 
-function BrandForm({ brand, onSave, onCancel }: { brand?: Brand; onSave: (b: Brand) => void; onCancel: () => void }) {
+function BrandForm({ brand, onSave, onCancel }: { brand?: AdminBrand; onSave: (b: AdminBrand) => void; onCancel: () => void }) {
   const [name, setName] = useState(brand?.name ?? "");
   const [slug, setSlug] = useState(brand?.slug ?? "");
+  const [logoUrl, setLogoUrl] = useState(brand?.logoUrl ?? "");
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSave({ id: brand?.id ?? "", name, slug: slug || name.toLowerCase().replace(/\s+/g, "-") });
+        onSave({ id: brand?.id ?? "", name, slug: slug || name.toLowerCase().replace(/\s+/g, "-"), logoUrl: logoUrl || null });
       }}
       className="space-y-4"
     >
@@ -107,6 +114,10 @@ function BrandForm({ brand, onSave, onCancel }: { brand?: Brand; onSave: (b: Bra
       <label className="block text-xs text-slate-600">
         Slug
         <input value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="auto-generated if left blank" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+      </label>
+      <label className="block text-xs text-slate-600">
+        Logo URL
+        <input value={logoUrl} onChange={(e) => setLogoUrl(e.target.value)} placeholder="/brand-logo.png" className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
       </label>
       <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
         <Button type="button" variant="ghost" onClick={onCancel}>Cancel</Button>

@@ -8,7 +8,7 @@ export function BrandStrip() {
         <p className="text-center text-xs font-bold uppercase tracking-widest text-slate-500">Authorised Dealer For</p>
         <div className="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-6">
           {brands.map((b) => (
-            <ProductImageFrame key={b.id} alt={b.name} label={b.name} className="aspect-[3/2] w-full" />
+            <ProductImageFrame key={b.id} src={b.logo} alt={b.name} label={b.name} className="aspect-[3/2] w-full" />
           ))}
         </div>
       </div>

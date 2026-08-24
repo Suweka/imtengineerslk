@@ -23,7 +23,7 @@ export default function BrandsPage() {
           return (
             <section key={brand.id} id={brand.slug}>
               <div className="flex items-center gap-4">
-                <ProductImageFrame alt={brand.name} label={brand.name} className="h-16 w-24" />
+                <ProductImageFrame src={brand.logo} alt={brand.name} label={brand.name} className="h-16 w-24" />
                 <h2 className="text-xl font-extrabold text-slate-900">{brand.name}</h2>
               </div>
               <div className="mt-5 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">

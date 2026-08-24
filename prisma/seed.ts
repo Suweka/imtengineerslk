@@ -12,8 +12,8 @@ async function main() {
   for (const b of brands) {
     await prisma.brand.upsert({
       where: { id: b.id },
-      update: {},
-      create: { id: b.id, name: b.name, slug: b.slug },
+      update: { logoUrl: b.logo ?? null },
+      create: { id: b.id, name: b.name, slug: b.slug, logoUrl: b.logo ?? null },
     });
   }
 
