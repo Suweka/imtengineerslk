@@ -74,3 +74,4 @@ dist/
 # Old project structures (cleanup)
 /web/
 imt-engineers-nextjs/
+*.tsbuildinfo

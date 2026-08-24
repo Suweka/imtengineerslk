@@ -1,40 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { categories as seedCategories } from "@/data/categories";
-import { products } from "@/data/products";
+import { useEffect, useState } from "react";
 import { Category } from "@/lib/types";
 import { formatLKRShort } from "@/lib/format";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Modal } from "@/components/admin/Modal";
 import { Button } from "@/components/ui/Button";
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>(seedCategories);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Category | null>(null);
   const [creating, setCreating] = useState(false);
 
-  function handleSave(category: Category) {
-    setCategories((prev) => (prev.some((c) => c.id === category.id) ? prev.map((c) => (c.id === category.id ? category : c)) : [category, ...prev]));
+  useEffect(() => {
+    fetch("/api/admin/categories")
+      .then((res) => res.json())
+      .then((data) => setCategories(data))
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function handleSave(category: Category) {
+    const exists = categories.some((c) => c.id === category.id);
+    const res = await fetch(exists ? `/api/admin/categories/${category.id}` : "/api/admin/categories", {
+      method: exists ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(category),
+    });
+    const saved = await res.json();
+
+    setCategories((prev) => {
+      const alreadyExists = prev.some((c) => c.id === saved.id);
+      return alreadyExists ? prev.map((c) => (c.id === saved.id ? saved : c)) : [saved, ...prev];
+    });
     setEditing(null);
     setCreating(false);
   }
 
-  function handleDelete(id: string) {
-    const inUse = products.some((p) => p.categoryId === id);
-    if (inUse) {
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this category?")) return;
+    const res = await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
+    if (!res.ok) {
       alert("This category has products assigned to it — reassign those products before deleting.");
       return;
     }
-    if (!confirm("Delete this category?")) return;
     setCategories((prev) => prev.filter((c) => c.id !== id));
   }
 
   return (
     <>
-      <AdminTopbar title="Categories" subtitle={`${categories.length} categories`} actions={<Button onClick={() => setCreating(true)}>+ Add category</Button>} />
-      <PreviewBanner />
+      <AdminTopbar title="Categories" subtitle={loading ? "Loading…" : `${categories.length} categories`} actions={<Button onClick={() => setCreating(true)}>+ Add category</Button>} />
 
       <div className="flex-1 p-6">
         <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
@@ -44,7 +59,6 @@ export default function AdminCategoriesPage() {
                 <th className="px-5 py-3">Name</th>
                 <th className="px-5 py-3">Slug</th>
                 <th className="px-5 py-3">Starting price</th>
-                <th className="px-5 py-3">Products</th>
                 <th className="px-5 py-3 text-right">Actions</th>
               </tr>
             </thead>
@@ -54,7 +68,6 @@ export default function AdminCategoriesPage() {
                   <td className="px-5 py-3 font-medium text-slate-900">{c.name}</td>
                   <td className="px-5 py-3 text-slate-500">/shop/{c.slug}</td>
                   <td className="px-5 py-3 text-slate-600">{formatLKRShort(c.fromPrice)}</td>
-                  <td className="px-5 py-3 text-slate-600">{products.filter((p) => p.categoryId === c.id).length}</td>
                   <td className="px-5 py-3">
                     <div className="flex justify-end gap-3">
                       <button onClick={() => setEditing(c)} className="font-semibold text-imt-blue hover:underline">Edit</button>
@@ -86,7 +99,7 @@ function CategoryForm({ category, onSave, onCancel }: { category?: Category; onS
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSave({ id: category?.id ?? `cat-${Date.now()}`, name, slug: slug || name.toLowerCase().replace(/\s+/g, "-"), fromPrice });
+        onSave({ id: category?.id ?? "", name, slug: slug || name.toLowerCase().replace(/\s+/g, "-"), fromPrice });
       }}
       className="space-y-4"
     >

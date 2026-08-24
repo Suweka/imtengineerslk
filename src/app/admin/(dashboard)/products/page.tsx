@@ -1,37 +1,52 @@
 "use client";
 
-import { useState } from "react";
-import { products as seedProducts } from "@/data/products";
+import { useEffect, useState } from "react";
 import { getBrandById } from "@/data/brands";
 import { categories } from "@/data/categories";
 import { Product } from "@/lib/types";
 import { formatLKRShort } from "@/lib/format";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Modal } from "@/components/admin/Modal";
 import { ProductForm } from "@/components/admin/ProductForm";
 import { Button } from "@/components/ui/Button";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState<Product[]>(seedProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState<Product | null>(null);
   const [creating, setCreating] = useState(false);
 
+  useEffect(() => {
+    fetch("/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .finally(() => setLoading(false));
+  }, []);
+
   const filtered = products.filter((p) => p.name.toLowerCase().includes(search.toLowerCase()));
 
-  function handleSave(product: Product) {
+  async function handleSave(product: Product) {
+    const exists = products.some((p) => p.id === product.id);
+    const res = await fetch(exists ? `/api/admin/products/${product.id}` : "/api/admin/products", {
+      method: exists ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(product),
+    });
+    const saved = await res.json();
+
     setProducts((prev) => {
-      const exists = prev.some((p) => p.id === product.id);
-      return exists ? prev.map((p) => (p.id === product.id ? product : p)) : [product, ...prev];
+      const alreadyExists = prev.some((p) => p.id === saved.id);
+      return alreadyExists ? prev.map((p) => (p.id === saved.id ? saved : p)) : [saved, ...prev];
     });
     setEditing(null);
     setCreating(false);
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     if (!confirm("Remove this product from the catalog?")) return;
+    await fetch(`/api/admin/products/${id}`, { method: "DELETE" });
     setProducts((prev) => prev.filter((p) => p.id !== id));
   }
 
@@ -39,10 +54,9 @@ export default function AdminProductsPage() {
     <>
       <AdminTopbar
         title="Products"
-        subtitle={`${products.length} products in catalog`}
+        subtitle={loading ? "Loading…" : `${products.length} products in catalog`}
         actions={<Button onClick={() => setCreating(true)}>+ Add product</Button>}
       />
-      <PreviewBanner />
 
       <div className="flex-1 p-6">
         <div className="mb-4">

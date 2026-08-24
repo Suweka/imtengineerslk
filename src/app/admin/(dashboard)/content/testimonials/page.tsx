@@ -1,51 +1,95 @@
 "use client";
 
-import { useState } from "react";
-import { testimonials as seedTestimonials } from "@/data/testimonials";
-import { Testimonial } from "@/lib/types";
+import { useEffect, useState } from "react";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Modal } from "@/components/admin/Modal";
 import { Button } from "@/components/ui/Button";
 import { StarRating } from "@/components/ui/StarRating";
 
-type AdminTestimonial = Testimonial & { isPublished: boolean };
+type AdminTestimonial = {
+  id: string;
+  customerName: string;
+  rating: number;
+  quote: string;
+  isPublished: boolean;
+  sortOrder: number;
+};
 
 export default function AdminTestimonialsPage() {
-  const [items, setItems] = useState<AdminTestimonial[]>(seedTestimonials.map((t) => ({ ...t, isPublished: true })));
+  const [items, setItems] = useState<AdminTestimonial[]>([]);
+  const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<AdminTestimonial | null>(null);
   const [creating, setCreating] = useState(false);
 
-  function handleSave(item: AdminTestimonial) {
-    setItems((prev) => (prev.some((t) => t.id === item.id) ? prev.map((t) => (t.id === item.id ? item : t)) : [item, ...prev]));
+  useEffect(() => {
+    fetch("/api/admin/testimonials")
+      .then((res) => res.json())
+      .then((data) => setItems(data))
+      .finally(() => setLoading(false));
+  }, []);
+
+  async function handleSave(item: AdminTestimonial) {
+    const exists = items.some((t) => t.id === item.id);
+    const res = await fetch(exists ? `/api/admin/testimonials/${item.id}` : "/api/admin/testimonials", {
+      method: exists ? "PUT" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(item),
+    });
+    const saved = await res.json();
+
+    setItems((prev) => {
+      const alreadyExists = prev.some((t) => t.id === saved.id);
+      return alreadyExists ? prev.map((t) => (t.id === saved.id ? saved : t)) : [saved, ...prev];
+    });
     setEditing(null);
     setCreating(false);
   }
 
-  function togglePublished(id: string) {
-    setItems((prev) => prev.map((t) => (t.id === id ? { ...t, isPublished: !t.isPublished } : t)));
+  async function togglePublished(t: AdminTestimonial) {
+    const res = await fetch(`/api/admin/testimonials/${t.id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isPublished: !t.isPublished }),
+    });
+    const saved = await res.json();
+    setItems((prev) => prev.map((item) => (item.id === saved.id ? saved : item)));
   }
 
-  function remove(id: string) {
+  async function remove(id: string) {
     if (!confirm("Delete this testimonial?")) return;
+    await fetch(`/api/admin/testimonials/${id}`, { method: "DELETE" });
     setItems((prev) => prev.filter((t) => t.id !== id));
   }
 
-  function move(id: string, dir: -1 | 1) {
-    setItems((prev) => {
-      const idx = prev.findIndex((t) => t.id === id);
-      const next = [...prev];
-      const swap = idx + dir;
-      if (swap < 0 || swap >= next.length) return prev;
-      [next[idx], next[swap]] = [next[swap], next[idx]];
-      return next;
-    });
+  async function move(id: string, dir: -1 | 1) {
+    const idx = items.findIndex((t) => t.id === id);
+    const swapIdx = idx + dir;
+    if (swapIdx < 0 || swapIdx >= items.length) return;
+
+    const a = items[idx];
+    const b = items[swapIdx];
+
+    const next = [...items];
+    [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+    setItems(next);
+
+    await Promise.all([
+      fetch(`/api/admin/testimonials/${a.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sortOrder: b.sortOrder }),
+      }),
+      fetch(`/api/admin/testimonials/${b.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sortOrder: a.sortOrder }),
+      }),
+    ]);
   }
 
   return (
     <>
-      <AdminTopbar title="Testimonials" subtitle={`${items.length} testimonials`} actions={<Button onClick={() => setCreating(true)}>+ Add testimonial</Button>} />
-      <PreviewBanner />
+      <AdminTopbar title="Testimonials" subtitle={loading ? "Loading…" : `${items.length} testimonials`} actions={<Button onClick={() => setCreating(true)}>+ Add testimonial</Button>} />
 
       <div className="flex-1 space-y-3 p-6">
         {items.map((t, i) => (
@@ -65,7 +109,7 @@ export default function AdminTestimonialsPage() {
               <p className="mt-1 text-sm text-slate-600">&ldquo;{t.quote}&rdquo;</p>
               <div className="mt-2 flex gap-3 text-xs font-semibold">
                 <button onClick={() => setEditing(t)} className="text-imt-blue hover:underline">Edit</button>
-                <button onClick={() => togglePublished(t.id)} className="text-slate-500 hover:underline">{t.isPublished ? "Unpublish" : "Publish"}</button>
+                <button onClick={() => togglePublished(t)} className="text-slate-500 hover:underline">{t.isPublished ? "Unpublish" : "Publish"}</button>
                 <button onClick={() => remove(t.id)} className="text-imt-red hover:underline">Delete</button>
               </div>
             </div>
@@ -91,7 +135,14 @@ function TestimonialForm({ testimonial, onSave, onCancel }: { testimonial?: Admi
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSave({ id: testimonial?.id ?? `t-${Date.now()}`, customerName, rating, quote, isPublished: testimonial?.isPublished ?? false });
+        onSave({
+          id: testimonial?.id ?? "",
+          customerName,
+          rating,
+          quote,
+          isPublished: testimonial?.isPublished ?? false,
+          sortOrder: testimonial?.sortOrder ?? 0,
+        });
       }}
       className="space-y-4"
     >

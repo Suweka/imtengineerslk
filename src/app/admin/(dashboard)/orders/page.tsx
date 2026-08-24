@@ -1,43 +1,79 @@
 "use client";
 
-import { useState } from "react";
-import { adminOrders as seedOrders, AdminOrder } from "@/data/admin-seed";
+import { useEffect, useState } from "react";
 import { formatLKRShort } from "@/lib/format";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { StatusBadge } from "@/components/admin/StatusBadge";
 import { Modal } from "@/components/admin/Modal";
 import { Button } from "@/components/ui/Button";
 
-const statusOptions: AdminOrder["status"][] = ["new", "contacted", "confirmed", "delivered_installed", "cancelled"];
+type OrderStatus = "new" | "contacted" | "confirmed" | "delivered_installed" | "cancelled";
+type WhatsappStatus = "pending" | "sent" | "failed";
+
+type OrderItem = { name: string; qty: number };
+
+type Order = {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  phone: string;
+  items: OrderItem[];
+  total: number;
+  fulfillment: "delivery" | "showroom-pickup";
+  status: OrderStatus;
+  whatsappStatus: WhatsappStatus;
+  createdAt: string;
+};
+
+const statusOptions: OrderStatus[] = ["new", "contacted", "confirmed", "delivered_installed", "cancelled"];
+
+function itemsSummary(items: OrderItem[]) {
+  return items.map((i) => `${i.qty}x ${i.name}`).join(", ");
+}
 
 export default function AdminOrdersPage() {
-  const [orders, setOrders] = useState<AdminOrder[]>(seedOrders);
-  const [selected, setSelected] = useState<AdminOrder | null>(null);
-  const [filter, setFilter] = useState<"all" | AdminOrder["status"]>("all");
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<Order | null>(null);
+  const [filter, setFilter] = useState<"all" | OrderStatus>("all");
   const [retrying, setRetrying] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/admin/orders")
+      .then((res) => res.json())
+      .then((data) => setOrders(data))
+      .finally(() => setLoading(false));
+  }, []);
 
   const filtered = filter === "all" ? orders : orders.filter((o) => o.status === filter);
 
-  function updateStatus(id: string, status: AdminOrder["status"]) {
+  async function updateStatus(id: string, status: OrderStatus) {
+    const res = await fetch(`/api/admin/orders/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+    if (!res.ok) return;
     setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, status } : o)));
     setSelected((prev) => (prev && prev.id === id ? { ...prev, status } : prev));
   }
 
-  function retryWhatsapp(id: string) {
+  async function retryWhatsapp(id: string) {
     setRetrying(id);
-    // TODO (backend): POST /api/admin/orders/[id]/retry-whatsapp
-    setTimeout(() => {
-      setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, whatsappStatus: "sent" } : o)));
-      setSelected((prev) => (prev && prev.id === id ? { ...prev, whatsappStatus: "sent" } : prev));
+    try {
+      const res = await fetch(`/api/admin/orders/${id}/retry-whatsapp`, { method: "POST" });
+      const data = await res.json();
+      const whatsappStatus: WhatsappStatus = data.whatsappStatus ?? "failed";
+      setOrders((prev) => prev.map((o) => (o.id === id ? { ...o, whatsappStatus } : o)));
+      setSelected((prev) => (prev && prev.id === id ? { ...prev, whatsappStatus } : prev));
+    } finally {
       setRetrying(null);
-    }, 1200);
+    }
   }
 
   return (
     <>
-      <AdminTopbar title="Orders" subtitle={`${orders.length} orders`} />
-      <PreviewBanner>Order status changes and WhatsApp retries update local state only in this preview.</PreviewBanner>
+      <AdminTopbar title="Orders" subtitle={loading ? "Loading…" : `${orders.length} orders`} />
 
       <div className="flex-1 p-6">
         <div className="mb-4 flex flex-wrap gap-2">
@@ -106,7 +142,7 @@ export default function AdminOrdersPage() {
             </div>
             <div>
               <p className="text-xs font-bold uppercase text-slate-400">Items</p>
-              <p className="text-slate-700">{selected.itemsSummary}</p>
+              <p className="text-slate-700">{itemsSummary(selected.items)}</p>
             </div>
             <div className="flex justify-between">
               <div>
@@ -123,7 +159,7 @@ export default function AdminOrdersPage() {
               <p className="mb-1.5 text-xs font-bold uppercase text-slate-400">Status</p>
               <select
                 value={selected.status}
-                onChange={(e) => updateStatus(selected.id, e.target.value as AdminOrder["status"])}
+                onChange={(e) => updateStatus(selected.id, e.target.value as OrderStatus)}
                 className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm"
               >
                 {statusOptions.map((s) => <option key={s} value={s}>{s.replace("_", " ")}</option>)}

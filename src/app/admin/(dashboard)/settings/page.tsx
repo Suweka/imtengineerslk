@@ -1,42 +1,89 @@
 "use client";
 
-import { useState } from "react";
-import { siteSettings } from "@/data/testimonials";
+import { useEffect, useState } from "react";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
-import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Button } from "@/components/ui/Button";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 
+const emptyForm = {
+  phone: "",
+  whatsapp: "",
+  email: "",
+  headOfficeAddress: "",
+  engineeringDeptAddress: "",
+  weekdays: "",
+  saturday: "",
+  sunday: "",
+  facebook: "",
+  instagram: "",
+  freeDeliveryThreshold: 0,
+};
+
 export default function AdminSettingsPage() {
-  const [form, setForm] = useState({
-    phone: siteSettings.phone,
-    whatsapp: siteSettings.whatsapp,
-    email: siteSettings.email,
-    headOfficeAddress: siteSettings.headOfficeAddress,
-    engineeringDeptAddress: siteSettings.engineeringDeptAddress,
-    weekdays: siteSettings.businessHours.weekdays,
-    saturday: siteSettings.businessHours.saturday,
-    sunday: siteSettings.businessHours.sunday,
-    facebook: "",
-    instagram: "",
-    freeDeliveryThreshold: siteSettings.freeDeliveryThreshold,
-  });
+  const [form, setForm] = useState(emptyForm);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data) return;
+        const businessHours = (data.businessHours as Record<string, string>) ?? {};
+        const socialLinks = (data.socialLinks as Record<string, string>) ?? {};
+        setForm({
+          phone: data.phone ?? "",
+          whatsapp: data.whatsapp ?? "",
+          email: data.email ?? "",
+          headOfficeAddress: data.headOfficeAddress ?? "",
+          engineeringDeptAddress: data.engineeringDeptAddress ?? "",
+          weekdays: businessHours.weekdays ?? "",
+          saturday: businessHours.saturday ?? "",
+          sunday: businessHours.sunday ?? "",
+          facebook: socialLinks.facebook ?? "",
+          instagram: socialLinks.instagram ?? "",
+          freeDeliveryThreshold: Number(data.freeDeliveryThreshold) || 0,
+        });
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((prev) => ({ ...prev, [key]: value }));
   }
 
-  function handleSave() {
-    // TODO (backend): PATCH /api/admin/settings — singleton SiteSettings row
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await fetch("/api/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          phone: form.phone,
+          whatsapp: form.whatsapp,
+          email: form.email,
+          headOfficeAddress: form.headOfficeAddress,
+          engineeringDeptAddress: form.engineeringDeptAddress,
+          businessHours: { weekdays: form.weekdays, saturday: form.saturday, sunday: form.sunday },
+          socialLinks: { facebook: form.facebook, instagram: form.instagram },
+          freeDeliveryThreshold: form.freeDeliveryThreshold,
+        }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <>
-      <AdminTopbar title="Settings" subtitle="Contact info, business hours, social links and site-wide values" actions={<Button onClick={handleSave}>{saved ? "Saved ✓" : "Save changes"}</Button>} />
-      <PreviewBanner />
+      <AdminTopbar
+        title="Settings"
+        subtitle={loading ? "Loading…" : "Contact info, business hours, social links and site-wide values"}
+        actions={<Button onClick={handleSave} disabled={saving}>{saved ? "Saved ✓" : saving ? "Saving…" : "Save changes"}</Button>}
+      />
 
       <div className="flex-1 space-y-6 p-6">
         <section className="rounded-xl border border-slate-200 bg-white p-5">
