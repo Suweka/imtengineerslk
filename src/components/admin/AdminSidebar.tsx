@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import { signOut } from "next-auth/react";
 
 const navGroups = [
@@ -39,11 +40,9 @@ const navGroups = [
   },
 ];
 
-export function AdminSidebar({ userEmail }: { userEmail: string }) {
-  const pathname = usePathname();
-
+function SidebarContent({ userEmail, pathname, onNavigate }: { userEmail: string; pathname: string; onNavigate?: () => void }) {
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-imt-navy text-slate-300 lg:flex lg:flex-col">
+    <>
       <div className="flex items-center gap-2 border-b border-white/10 px-5 py-5">
         <div className="inline-flex rounded-md bg-white px-2.5 py-1.5">
           <div className="relative h-7 w-[103px]">
@@ -66,6 +65,7 @@ export function AdminSidebar({ userEmail }: { userEmail: string }) {
                   <Link
                     key={link.href}
                     href={link.href}
+                    onClick={onNavigate}
                     className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                       active ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/5 hover:text-white"
                     }`}
@@ -96,7 +96,47 @@ export function AdminSidebar({ userEmail }: { userEmail: string }) {
           </button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+}
+
+export function AdminSidebar({ userEmail }: { userEmail: string }) {
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    setMobileOpen(false);
+  }, [pathname]);
+
+  return (
+    <>
+      <button
+        onClick={() => setMobileOpen(true)}
+        aria-label="Open menu"
+        className="fixed left-3 top-3 z-40 flex h-10 w-10 items-center justify-center rounded-lg bg-imt-navy text-white shadow-lg lg:hidden"
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+          <path d="M3 6h18M3 12h18M3 18h18" strokeLinecap="round" />
+        </svg>
+      </button>
+
+      <aside className="hidden w-64 shrink-0 border-r border-slate-800 bg-imt-navy text-slate-300 lg:flex lg:flex-col">
+        <SidebarContent userEmail={userEmail} pathname={pathname} />
+      </aside>
+
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          <button
+            aria-label="Close menu"
+            onClick={() => setMobileOpen(false)}
+            className="absolute inset-0 bg-slate-900/50"
+          />
+          <aside className="absolute inset-y-0 left-0 flex w-72 max-w-[85%] flex-col bg-imt-navy text-slate-300 shadow-xl">
+            <SidebarContent userEmail={userEmail} pathname={pathname} onNavigate={() => setMobileOpen(false)} />
+          </aside>
+        </div>
+      )}
+    </>
   );
 }
 
