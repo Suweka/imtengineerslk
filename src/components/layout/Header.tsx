@@ -57,13 +57,13 @@ export function Header() {
       }`}
     >
       <TopBar />
-      <div className="mx-auto flex h-[25px] max-w-[1600px] items-center justify-between gap-4 px-4 py-0 sm:h-auto sm:px-6 sm:py-3">
+      <div className="mx-auto flex h-[28px] max-w-[1600px] items-center justify-between gap-4 px-4 py-0 sm:h-auto sm:px-6 sm:py-3">
         <div className="flex items-center gap-2 sm:gap-3">
           <button className="text-slate-700 lg:hidden" aria-label="Menu" onClick={() => setMobileOpen((v) => !v)}>
             <Icon name="menu" size={20} />
           </button>
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-[25px] w-[91px] sm:h-11 sm:w-[161px]">
+            <div className="relative h-[26px] w-[95px] sm:h-11 sm:w-[161px]">
               <Image
                 src="/logo.png"
                 alt="IMT Engineers Logo"
@@ -145,11 +145,11 @@ export function Header() {
       </div>
 
       <div
-        className={`grid overflow-hidden border-slate-100 bg-white transition-all duration-300 ease-out lg:hidden ${
-          mobileOpen ? "grid-rows-[1fr] border-t opacity-100" : "grid-rows-[0fr] border-t-0 opacity-0"
+        className={`overflow-hidden border-slate-100 bg-white transition-all duration-300 ease-out lg:hidden ${
+          mobileOpen ? "max-h-96 border-t opacity-100" : "max-h-0 border-t-0 opacity-0"
         }`}
       >
-        <div className="min-h-0 px-4 py-3">
+        <div className="px-4 py-3">
           <div className="flex flex-col gap-1">
             {[{ href: "/", label: "Home" }, { href: "/shop", label: "Shop" }, { href: "/brands", label: "Brands" }, ...navLinks.slice(1)].map(
               (l) => (
