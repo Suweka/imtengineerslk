@@ -16,11 +16,7 @@ export function AdminImageUploader({ productId, initial = [] }: { productId?: st
   const inputRef = useRef<HTMLInputElement>(null);
 
   async function handleFiles(files: FileList | null) {
-    if (!files) return;
-    if (!productId) {
-      alert("Save the product first, then add photos — image uploads need a saved product to attach to.");
-      return;
-    }
+    if (!files || !productId) return;
 
     for (const file of Array.from(files)) {
       const tempId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -75,6 +71,14 @@ export function AdminImageUploader({ productId, initial = [] }: { productId?: st
     if (!productId || id.startsWith("existing-")) return;
     fetch(`/api/admin/products/${productId}/images?imageId=${id}`, { method: "DELETE" }).catch((err) =>
       console.error("Failed to delete image", err)
+    );
+  }
+
+  if (!productId) {
+    return (
+      <div className="rounded-lg border-2 border-dashed border-slate-300 p-6 text-center text-sm text-slate-500">
+        Save the product first, then come back to add photos — image uploads need a saved product to attach to.
+      </div>
     );
   }
 
