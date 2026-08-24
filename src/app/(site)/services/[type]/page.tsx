@@ -6,13 +6,15 @@ export function generateStaticParams() {
   return serviceTypes.map((s) => ({ type: s.slug }));
 }
 
-export function generateMetadata({ params }: { params: { type: string } }) {
-  const service = getServiceBySlug(params.type);
+export async function generateMetadata({ params }: { params: Promise<{ type: string }> }) {
+  const { type } = await params;
+  const service = getServiceBySlug(type);
   return { title: service ? `${service.name} | IMT Engineers` : "Services | IMT Engineers" };
 }
 
-export default function ServiceTypePage({ params }: { params: { type: string } }) {
-  const service = getServiceBySlug(params.type);
+export default async function ServiceTypePage({ params }: { params: Promise<{ type: string }> }) {
+  const { type } = await params;
+  const service = getServiceBySlug(type);
   if (!service) notFound();
 
   return (

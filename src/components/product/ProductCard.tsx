@@ -39,7 +39,7 @@ export function ProductCard({ product, layout = "grid" }: { product: Product; la
   return (
     <Link
       href={`/product/${product.slug}`}
-      className={`group flex ${layout === "list" ? "flex-row gap-4" : "flex-col"} rounded-xl border border-slate-200 bg-white p-4 transition-shadow hover:shadow-md`}
+      className={`group flex ${layout === "list" ? "flex-row gap-4" : "flex-col"} rounded-xl bg-white p-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl`}
     >
       <div className={`relative ${layout === "list" ? "w-40 shrink-0" : "w-full"}`}>
         <ProductImageFrame src={product.images[0]} alt={product.name} className="aspect-square w-full" />
@@ -78,7 +78,12 @@ export function ProductCard({ product, layout = "grid" }: { product: Product; la
           <div>
             <div className="text-lg font-bold text-imt-blue">{formatLKRShort(price)}</div>
             {product.discountPrice && (
-              <div className="text-xs text-slate-400 line-through">{formatLKRShort(product.price)}</div>
+              <div className="flex items-center gap-1.5">
+                <span className="text-xs text-slate-400 line-through">{formatLKRShort(product.price)}</span>
+                <span className="text-xs font-semibold text-emerald-600">
+                  Save {formatLKRShort(product.price - product.discountPrice)}
+                </span>
+              </div>
             )}
             {product.installationFee > 0 && (
               <div className="text-xs text-slate-500">+ install from {formatLKRShort(product.installationFee)}</div>

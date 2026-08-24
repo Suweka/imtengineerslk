@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
 import { Order, getOrder } from "@/lib/orders";
 import { formatLKRShort } from "@/lib/format";
@@ -8,12 +8,13 @@ import { siteSettings } from "@/data/testimonials";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 import { Button } from "@/components/ui/Button";
 
-export default function OrderConfirmationPage({ params }: { params: { id: string } }) {
+export default function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
 
   useEffect(() => {
-    setOrder(getOrder(params.id) ?? null);
-  }, [params.id]);
+    setOrder(getOrder(id) ?? null);
+  }, [id]);
 
   if (order === undefined) return null;
 

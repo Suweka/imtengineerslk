@@ -10,6 +10,7 @@ import { brands } from "@/data/brands";
 import { useCart } from "@/lib/cart-context";
 import { formatLKRShort } from "@/lib/format";
 import { Icon } from "@/components/ui/Icon";
+import { MiniCart } from "@/components/layout/MiniCart";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -105,18 +106,21 @@ export function Header() {
           <Link href="/admin" aria-label="Account" className="hidden text-slate-600 hover:text-imt-blue sm:block">
             <Icon name="person" size={20} />
           </Link>
-          <Link
-            href="/cart"
-            aria-label="Cart"
-            className={`relative text-slate-600 transition-colors hover:text-imt-blue ${cartBump ? "animate-bump" : ""}`}
-          >
-            <Icon name="shopping_cart" size={22} />
-            {itemCount > 0 && (
-              <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-imt-red text-[10px] font-bold text-white transition-transform">
-                {itemCount}
-              </span>
-            )}
-          </Link>
+          <div className="group relative">
+            <Link
+              href="/cart"
+              aria-label="Cart"
+              className={`relative block text-slate-600 transition-colors hover:text-imt-blue ${cartBump ? "animate-bump" : ""}`}
+            >
+              <Icon name="shopping_cart" size={22} />
+              {itemCount > 0 && (
+                <span className="absolute -right-2 -top-2 flex h-4 w-4 items-center justify-center rounded-full bg-imt-red text-[10px] font-bold text-white transition-transform">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
+            <MiniCart />
+          </div>
           <span className="hidden items-center gap-1.5 text-sm font-medium text-imt-navy lg:flex">
             <Icon name="account_balance_wallet" size={18} />
             {formatLKRShort(total)}

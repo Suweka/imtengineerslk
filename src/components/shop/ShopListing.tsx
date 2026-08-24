@@ -4,8 +4,10 @@ import { useState } from "react";
 import { Product } from "@/lib/types";
 import { FilterPanel } from "./FilterPanel";
 import { ProductCard } from "@/components/product/ProductCard";
+import { Breadcrumbs, Crumb } from "@/components/ui/Breadcrumbs";
+import { RecentlyViewed } from "@/components/product/RecentlyViewed";
 
-export function ShopListing({ title, products }: { title: string; products: Product[] }) {
+export function ShopListing({ title, products, crumbs }: { title: string; products: Product[]; crumbs?: Crumb[] }) {
   const [layout, setLayout] = useState<"grid" | "list">("grid");
   const [sort, setSort] = useState("popular");
 
@@ -17,7 +19,9 @@ export function ShopListing({ title, products }: { title: string; products: Prod
   });
 
   return (
-    <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
+    <div>
+      {crumbs && <Breadcrumbs items={crumbs} className="pb-0" />}
+      <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-extrabold text-slate-900">{title}</h1>
       <p className="mt-1 text-sm text-slate-500">{products.length} products</p>
 
@@ -64,6 +68,8 @@ export function ShopListing({ title, products }: { title: string; products: Prod
           </div>
         </div>
       </div>
+      </div>
+      <RecentlyViewed />
     </div>
   );
 }

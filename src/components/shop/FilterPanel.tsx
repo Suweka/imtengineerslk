@@ -4,6 +4,7 @@ import { useState } from "react";
 import { brands } from "@/data/brands";
 import { GlassPanel } from "@/components/ui/GlassPanel";
 import { Button } from "@/components/ui/Button";
+import { Checkbox } from "@/components/ui/Checkbox";
 
 const capacities = ["0.75 HP", "1.0 HP", "1.5 HP", "2.0 HP", "2.5 HP", "3.0 HP"];
 const roomSizes = ["Up to 120 sq ft", "120-180 sq ft", "180-250 sq ft", "250 sq ft and above"];
@@ -31,9 +32,9 @@ export function FilterPanel() {
     <GlassPanel className="h-fit p-5">
       <Section title="Brand">
         {brands.map((b) => (
-          <label key={b.id} className="flex items-center justify-between text-sm text-slate-700">
+          <label key={b.id} className="flex cursor-pointer items-center justify-between text-sm text-slate-700 hover:text-imt-blue">
             <span className="flex items-center gap-2">
-              <input type="checkbox" className="rounded border-slate-300 text-imt-blue" /> {b.name}
+              <Checkbox /> {b.name}
             </span>
           </label>
         ))}
@@ -41,8 +42,8 @@ export function FilterPanel() {
 
       <Section title="AC type">
         {acTypes.map((t) => (
-          <label key={t} className="flex items-center gap-2 text-sm text-slate-700">
-            <input type="checkbox" className="rounded border-slate-300 text-imt-blue" /> {t}
+          <label key={t} className="flex cursor-pointer items-center gap-2 text-sm text-slate-700 hover:text-imt-blue">
+            <Checkbox /> {t}
           </label>
         ))}
       </Section>
@@ -59,8 +60,8 @@ export function FilterPanel() {
 
       <Section title="Room size">
         {roomSizes.map((r) => (
-          <label key={r} className="flex items-center gap-2 text-sm text-slate-700">
-            <input type="checkbox" className="rounded border-slate-300 text-imt-blue" /> {r}
+          <label key={r} className="flex cursor-pointer items-center gap-2 text-sm text-slate-700 hover:text-imt-blue">
+            <Checkbox /> {r}
           </label>
         ))}
       </Section>

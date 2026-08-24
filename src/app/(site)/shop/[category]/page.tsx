@@ -8,20 +8,26 @@ export function generateStaticParams() {
   return categories.map((c) => ({ category: c.slug }));
 }
 
-export function generateMetadata({ params }: { params: { category: string } }) {
-  const category = getCategoryBySlug(params.category);
+export async function generateMetadata({ params }: { params: Promise<{ category: string }> }) {
+  const { category: categorySlug } = await params;
+  const category = getCategoryBySlug(categorySlug);
   return { title: category ? `${category.name} | IMT Engineers` : "Shop | IMT Engineers" };
 }
 
-export default function CategoryPage({ params }: { params: { category: string } }) {
-  const category = getCategoryBySlug(params.category);
+export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
+  const { category: categorySlug } = await params;
+  const category = getCategoryBySlug(categorySlug);
   if (!category) notFound();
 
   const categoryProducts = getProductsByCategory(category.id);
 
   return (
     <>
-      <ShopListing title={category.name} products={categoryProducts} />
+      <ShopListing
+        title={category.name}
+        products={categoryProducts}
+        crumbs={[{ label: "Home", href: "/" }, { label: "Shop", href: "/shop" }, { label: category.name }]}
+      />
       <InfoBar items={trustItems} tone="light" />
     </>
   );

@@ -10,19 +10,23 @@ import { RoomSizeCalculator } from "@/components/product/RoomSizeCalculator";
 import { ProductCard } from "@/components/product/ProductCard";
 import { StarRating } from "@/components/ui/StarRating";
 import { Badge } from "@/components/ui/Badge";
+import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { InfoBar, trustItems } from "@/components/home/InfoBar";
+import { RecentlyViewed, TrackViewed } from "@/components/product/RecentlyViewed";
 
 export function generateStaticParams() {
   return products.map((p) => ({ slug: p.slug }));
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }) {
-  const product = getProductBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = getProductBySlug(slug);
   return { title: product ? `${product.name} | IMT Engineers` : "Product | IMT Engineers" };
 }
 
-export default function ProductPage({ params }: { params: { slug: string } }) {
-  const product = getProductBySlug(params.slug);
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = getProductBySlug(slug);
   if (!product) notFound();
 
   const brand = getBrandById(product.brandId);
@@ -32,10 +36,15 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
 
   return (
     <>
-      <div className="mx-auto max-w-[1600px] px-4 pt-4 text-xs text-slate-500 sm:px-6">
-        <Link href="/">Home</Link> › <Link href="/shop">Shop</Link> ›{" "}
-        {category && <Link href={`/shop/${category.slug}`}>{category.name}</Link>} › {product.name}
-      </div>
+      <TrackViewed productId={product.id} />
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Shop", href: "/shop" },
+          ...(category ? [{ label: category.name, href: `/shop/${category.slug}` }] : []),
+          { label: product.name },
+        ]}
+      />
 
       <div className="mx-auto max-w-[1600px] px-4 py-6 sm:px-6">
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
@@ -96,6 +105,8 @@ export default function ProductPage({ params }: { params: { slug: string } }) {
           </div>
         </div>
       </section>
+
+      <RecentlyViewed excludeId={product.id} />
 
       <InfoBar items={trustItems} tone="light" />
     </>

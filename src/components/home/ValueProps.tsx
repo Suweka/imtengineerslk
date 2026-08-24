@@ -16,7 +16,7 @@ export function ValueProps() {
             key={item.title}
             className={`group flex animate-fade-in-up flex-col items-center gap-2 border-r border-t border-slate-100 p-[18px] text-center opacity-0 transition-colors duration-300 hover:bg-slate-50/70 lg:flex-row lg:gap-[15px] lg:border-0 lg:px-[26px] lg:py-[22px] lg:text-left ${
               i > 0 ? "lg:border-l lg:border-slate-100" : ""
-            }`}
+            } ${i === items.length - 1 ? "max-lg:pr-14" : ""}`}
             style={{ animationDelay: `${300 + i * 80}ms` }}
           >
             <Icon
