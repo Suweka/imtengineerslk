@@ -107,6 +107,7 @@ export function AdminImageUploader({ productId, initial = [] }: { productId?: st
                 </div>
               )}
               <button
+                type="button"
                 onClick={() => removeImage(img.id)}
                 className="absolute right-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-white/90 text-slate-500 shadow hover:text-imt-red"
                 aria-label="Remove image"
@@ -120,7 +121,7 @@ export function AdminImageUploader({ productId, initial = [] }: { productId?: st
               {img.status === "failed" && (
                 <>
                   <span className="text-red-600">Failed</span>
-                  <button onClick={() => retryImage(img.id)} className="font-semibold text-imt-blue hover:underline">
+                  <button type="button" onClick={() => retryImage(img.id)} className="font-semibold text-imt-blue hover:underline">
                     Retry
                   </button>
                 </>
@@ -130,6 +131,7 @@ export function AdminImageUploader({ productId, initial = [] }: { productId?: st
         ))}
 
         <button
+          type="button"
           onClick={() => inputRef.current?.click()}
           className="flex aspect-square flex-col items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-slate-300 text-slate-400 hover:border-imt-blue hover:text-imt-blue"
         >
