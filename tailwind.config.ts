@@ -48,12 +48,17 @@ const config: Config = {
           "0%, 100%": { transform: "scale(1)" },
           "50%": { transform: "scale(1.25)" },
         },
+        marquee: {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "fade-in-up": "fadeInUp 0.7s cubic-bezier(0.16,1,0.3,1) both",
         "fade-in": "fadeIn 0.6s ease-out both",
         "scale-in": "scaleIn 0.5s cubic-bezier(0.16,1,0.3,1) both",
         bump: "bump 0.35s ease-out",
+        marquee: "marquee 25s linear infinite",
       },
     },
   },
