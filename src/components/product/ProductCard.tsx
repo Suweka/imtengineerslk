@@ -55,23 +55,20 @@ export function ProductCard({ product, layout = "grid" }: { product: Product; la
         <h3 className="font-semibold text-slate-900">{product.name}</h3>
         <StarRating rating={product.rating} reviewCount={product.reviewCount} />
 
-        <div className="mt-1 grid grid-cols-4 gap-x-2 text-xs text-slate-500">
-          <div>
-            <div className="uppercase">Capacity</div>
-            <div className="font-medium text-slate-800">{product.capacityHP} HP</div>
+        <div className="mt-1 flex items-center justify-between text-xs text-slate-500">
+          <div className="flex items-center gap-3">
+            <div>
+              <span className="uppercase">Capacity</span>{" "}
+              <span className="font-medium text-slate-800">{product.capacityHP} HP</span>
+            </div>
+            <div>
+              <span className="uppercase">Energy</span>{" "}
+              <span className="font-medium text-slate-800 capitalize">{product.energyRating}</span>
+            </div>
           </div>
-          <div>
-            <div className="uppercase">Type</div>
-            <div className="font-medium text-slate-800 capitalize">{product.acType}</div>
-          </div>
-          <div>
-            <div className="uppercase">Room size</div>
-            <div className="font-medium text-slate-800">{product.recommendedRoomSize}</div>
-          </div>
-          <div>
-            <div className="uppercase">Energy</div>
-            <div className="font-medium text-slate-800 capitalize">{product.energyRating}</div>
-          </div>
+          <span className="font-semibold text-imt-blue opacity-0 transition-opacity group-hover:opacity-100">
+            View details →
+          </span>
         </div>
 
         <div className="mt-2 flex items-end justify-between gap-2">

@@ -38,8 +38,24 @@ export function Header() {
     prevCount.current = itemCount;
   }, [itemCount]);
 
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 24);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 bg-white shadow-sm">
+    <header
+      className={`sticky top-0 z-40 transition-all duration-300 ${
+        scrolled
+          ? "bg-white/90 shadow-md backdrop-blur-md"
+          : "bg-white shadow-none"
+      }`}
+    >
       <TopBar />
       <div className="mx-auto flex max-w-[1600px] items-center justify-between gap-4 px-4 py-3 sm:px-6">
         <div className="flex items-center gap-3">
