@@ -3,23 +3,27 @@ export async function removeBackground(image: string | Buffer): Promise<Buffer> 
     throw new Error("REMOVE_BG_API_KEY not configured");
   }
 
-  let body: BodyInit;
+  let imageBuffer: Buffer;
   if (Buffer.isBuffer(image)) {
-    body = new Uint8Array(image);
+    imageBuffer = image;
   } else {
     const imgRes = await fetch(image);
     if (!imgRes.ok) {
       throw new Error(`Failed to fetch image: ${imgRes.statusText}`);
     }
-    body = await imgRes.arrayBuffer();
+    imageBuffer = Buffer.from(await imgRes.arrayBuffer());
   }
+
+  const formData = new FormData();
+  formData.append("image_file", new Blob([new Uint8Array(imageBuffer)]), "image.png");
+  formData.append("size", "auto");
 
   const removeBgRes = await fetch("https://api.remove.bg/v1.0/removebg", {
     method: "POST",
     headers: {
       "X-Api-Key": process.env.REMOVE_BG_API_KEY,
     },
-    body,
+    body: formData,
   });
 
   if (!removeBgRes.ok) {
