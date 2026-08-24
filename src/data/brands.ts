@@ -4,10 +4,10 @@ import { Brand } from "@/lib/types";
 export const brands: Brand[] = [
   { id: "brand-daikin", name: "Daikin", slug: "daikin", logo: "/daikin-logo-png.png" },
   { id: "brand-midea", name: "Midea", slug: "midea", logo: "/midea-logo.png" },
-  { id: "brand-panasonic", name: "Panasonic", slug: "panasonic", logo: "/Panasonic-logo.jpg" },
-  { id: "brand-lg", name: "LG", slug: "lg", logo: "/LG-LOGO.jpg" },
+  { id: "brand-panasonic", name: "Panasonic", slug: "panasonic", logo: "/panasonic-logo.png" },
+  { id: "brand-lg", name: "LG", slug: "lg", logo: "/LG-LOGO.png" },
   { id: "brand-hitachi", name: "Hitachi", slug: "hitachi", logo: "/Hitachi-AC-logo.png" },
-  { id: "brand-samsung", name: "Samsung", slug: "samsung", logo: "/Samsung-logo.jpg" },
+  { id: "brand-samsung", name: "Samsung", slug: "samsung", logo: "/samsung-logo.png" },
 ];
 
 export function getBrandBySlug(slug: string) {
