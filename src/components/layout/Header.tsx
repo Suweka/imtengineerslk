@@ -53,10 +53,8 @@ export function Header() {
 
   return (
     <header
-      className={`sticky top-0 z-40 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/90 shadow-md backdrop-blur-md"
-          : "bg-white shadow-none"
+      className={`sticky top-0 z-40 border-b border-white/60 bg-gradient-to-b from-white/85 via-sky-50/70 to-white/60 backdrop-blur-xl transition-shadow duration-300 ${
+        scrolled ? "shadow-[0_8px_24px_rgba(28,117,188,0.12)]" : "shadow-none"
       }`}
     >
       <TopBar />
@@ -148,7 +146,7 @@ export function Header() {
       </div>
 
       <div
-        className={`overflow-hidden border-slate-100 bg-white transition-all duration-300 ease-out lg:hidden ${
+        className={`overflow-hidden border-white/60 bg-white/70 backdrop-blur-xl transition-all duration-300 ease-out lg:hidden ${
           mobileOpen ? "max-h-96 border-t opacity-100" : "max-h-0 border-t-0 opacity-0"
         }`}
       >
@@ -156,7 +154,7 @@ export function Header() {
           <div className="flex flex-col gap-1">
             {[{ href: "/", label: "Home" }, { href: "/shop", label: "Shop" }, { href: "/brands", label: "Brands" }, ...navLinks.slice(1)].map(
               (l) => (
-                <Link key={l.href} href={l.href} className="rounded px-2 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50" onClick={() => setMobileOpen(false)}>
+                <Link key={l.href} href={l.href} className="rounded px-2 py-2 text-sm font-semibold text-slate-700 hover:bg-white/60" onClick={() => setMobileOpen(false)}>
                   {l.label}
                 </Link>
               )
