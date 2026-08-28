@@ -28,6 +28,7 @@
     "prisma": "^6.19.3",
     "react": "^18",
     "react-dom": "^18",
+    "resend": "^6.24.0",
     "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {

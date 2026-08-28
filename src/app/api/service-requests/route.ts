@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { sendServiceRequestNotification } from "@/lib/whatsapp";
+import { sendServiceRequestOwnerAlert } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -16,6 +17,7 @@ export async function POST(req: Request) {
     });
 
     const whatsappStatus = await sendServiceRequestNotification(serviceRequest);
+    await sendServiceRequestOwnerAlert(serviceRequest);
     await prisma.serviceRequest.update({
       where: { id: serviceRequest.id },
       data: { whatsappStatus },

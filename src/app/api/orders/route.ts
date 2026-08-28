@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { sendOrderNotification } from "@/lib/whatsapp";
+import { sendOrderOwnerAlert } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
@@ -29,6 +30,7 @@ export async function POST(req: Request) {
     });
 
     const whatsappStatus = await sendOrderNotification(order);
+    await sendOrderOwnerAlert(order);
     await prisma.order.update({
       where: { id: order.id },
       data: { whatsappStatus },

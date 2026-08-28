@@ -1,7 +1,7 @@
 import { Order, ServiceRequest } from "@prisma/client";
 
 const API_VERSION = "v20.0";
-const BASE_URL = `https://graph.instagram.com/${API_VERSION}`;
+const BASE_URL = `https://graph.facebook.com/${API_VERSION}`;
 
 export async function sendOrderNotification(order: Order) {
   if (!process.env.WHATSAPP_API_TOKEN || !process.env.WHATSAPP_PHONE_NUMBER_ID) {
