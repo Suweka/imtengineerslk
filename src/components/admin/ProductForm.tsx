@@ -50,7 +50,11 @@ export function ProductForm({
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        onSave(form);
+        // images are owned by the image upload endpoint (which processes
+        // background removal and syncs Product.images itself) — never send
+        // this form's stale copy back, or it will clobber real uploads.
+        const { images: _images, ...rest } = form;
+        onSave(rest as Product);
       }}
       className="space-y-5"
     >
