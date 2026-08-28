@@ -1,5 +1,6 @@
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { IcePlate } from "@/components/ui/IcePlate";
 
 const heroCards = [
   { icon: "local_shipping", title: "Free Delivery", sub: "Islandwide" },
@@ -56,17 +57,19 @@ export function Hero() {
 
           <div className="absolute right-4 top-10 hidden flex-col gap-3.5 sm:right-6 xl:flex">
             {heroCards.map((c, i) => (
-              <div
+              <IcePlate
                 key={c.title}
-                className="flex min-w-[196px] animate-scale-in items-center gap-3 rounded-[10px] border border-white/60 bg-white/80 py-3.5 pl-4 pr-[22px] opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-xl"
+                className="min-w-[196px] animate-scale-in opacity-0 !rounded-[10px]"
                 style={{ animationDelay: `${300 + i * 100}ms` }}
               >
-                <Icon name={c.icon} className="text-imt-blue" size={22} />
-                <div>
-                  <div className="text-[13.5px] font-medium leading-[1.5] text-[#172B3A]">{c.title}</div>
-                  <div className="mt-0.5 text-[11.5px] text-[#6B7A88]">{c.sub}</div>
+                <div className="flex items-center gap-3 py-3.5 pl-4 pr-[22px]">
+                  <Icon name={c.icon} className="text-imt-blue" size={22} />
+                  <div>
+                    <div className="text-[13.5px] font-medium leading-[1.5] text-[#172B3A]">{c.title}</div>
+                    <div className="mt-0.5 text-[11.5px] text-[#6B7A88]">{c.sub}</div>
+                  </div>
                 </div>
-              </div>
+              </IcePlate>
             ))}
           </div>
         </div>

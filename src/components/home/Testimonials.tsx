@@ -1,5 +1,6 @@
 import { testimonials } from "@/data/testimonials";
 import { StarRating } from "@/components/ui/StarRating";
+import { IcePlate } from "@/components/ui/IcePlate";
 
 export function Testimonials() {
   return (
@@ -10,11 +11,11 @@ export function Testimonials() {
       </div>
       <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
         {testimonials.map((t) => (
-          <div key={t.id} className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+          <IcePlate key={t.id} className="p-6">
             <StarRating rating={t.rating} />
             <p className="mt-3 text-sm text-slate-700">&ldquo;{t.quote}&rdquo;</p>
             <p className="mt-4 text-sm font-semibold text-slate-900">{t.customerName}</p>
-          </div>
+          </IcePlate>
         ))}
       </div>
     </section>
