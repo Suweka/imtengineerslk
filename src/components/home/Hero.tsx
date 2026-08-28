@@ -10,12 +10,13 @@ const heroCards = [
 export function Hero() {
   return (
     <>
-      <section className="relative bg-[#F7F9FC] lg:h-[430px] lg:bg-[#DCEAF3]">
+      <section className="relative overflow-hidden bg-[#F7F9FC] lg:h-[430px] lg:bg-[#DCEAF3]">
         <div
           className="absolute inset-0 hidden bg-cover bg-center bg-no-repeat lg:block"
           style={{ backgroundImage: "url('/home-hero.png')" }}
         />
         <div className="absolute inset-0 hidden lg:block lg:bg-hero-fade" />
+        <div className="pointer-events-none absolute -left-24 top-1/2 hidden h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-imt-blue/10 blur-3xl lg:block" />
         <div className="relative mx-auto h-full max-w-[1600px] px-4 sm:px-6 lg:flex lg:h-full lg:items-center">
           <div className="max-w-[470px] py-8 lg:max-w-[700px] lg:py-0">
             <p className="mb-3.5 animate-fade-in-up text-[13px] font-semibold opacity-0 lg:text-lg">
@@ -35,7 +36,11 @@ export function Hero() {
               reliable after-sales service.
             </p>
             <div className="flex animate-fade-in-up flex-wrap gap-3 opacity-0 [animation-delay:240ms]">
-              <ButtonLink href="/shop" size="lg" className="h-11 px-6 text-base lg:h-[56px] lg:px-8 lg:text-lg">
+              <ButtonLink
+                href="/shop"
+                size="lg"
+                className="h-11 px-6 text-base shadow-[0_0_0_0_rgba(28,117,188,0.5)] hover:shadow-[0_0_24px_4px_rgba(28,117,188,0.35)] lg:h-[56px] lg:px-8 lg:text-lg"
+              >
                 Shop Now <Icon name="arrow_forward" size={20} />
               </ButtonLink>
               <ButtonLink
@@ -53,7 +58,7 @@ export function Hero() {
             {heroCards.map((c, i) => (
               <div
                 key={c.title}
-                className="flex min-w-[196px] animate-scale-in items-center gap-3 rounded-[10px] bg-white py-3.5 pl-4 pr-[22px] opacity-0 shadow-lg transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-xl"
+                className="flex min-w-[196px] animate-scale-in items-center gap-3 rounded-[10px] border border-white/60 bg-white/80 py-3.5 pl-4 pr-[22px] opacity-0 shadow-lg backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:bg-white hover:shadow-xl"
                 style={{ animationDelay: `${300 + i * 100}ms` }}
               >
                 <Icon name={c.icon} className="text-imt-blue" size={22} />
