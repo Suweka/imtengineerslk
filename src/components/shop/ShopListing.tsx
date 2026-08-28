@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Product } from "@/lib/types";
-import { FilterPanel } from "./FilterPanel";
+import { FilterPanel, ShopFilters, emptyFilters } from "./FilterPanel";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Breadcrumbs, Crumb } from "@/components/ui/Breadcrumbs";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
@@ -12,7 +12,24 @@ export function ShopListing({ title, products, crumbs }: { title: string; produc
   const [sort, setSort] = useState("popular");
   const [filtersOpen, setFiltersOpen] = useState(false);
 
-  const sorted = [...products].sort((a, b) => {
+  const bounds = useMemo(() => {
+    if (products.length === 0) return { min: 0, max: 0 };
+    const prices = products.map((p) => p.discountPrice ?? p.price);
+    return { min: Math.min(...prices), max: Math.max(...prices) };
+  }, [products]);
+
+  const [filters, setFilters] = useState<ShopFilters>(() => emptyFilters(bounds.min, bounds.max));
+
+  const filtered = products.filter((p) => {
+    const price = p.discountPrice ?? p.price;
+    if (price < filters.priceMin || price > filters.priceMax) return false;
+    if (filters.brandIds.length > 0 && !filters.brandIds.includes(p.brandId)) return false;
+    if (filters.acTypes.length > 0 && !filters.acTypes.includes(p.acType)) return false;
+    if (filters.capacities.length > 0 && !filters.capacities.includes(p.capacityHP)) return false;
+    return true;
+  });
+
+  const sorted = [...filtered].sort((a, b) => {
     if (sort === "price-asc") return (a.discountPrice ?? a.price) - (b.discountPrice ?? b.price);
     if (sort === "price-desc") return (b.discountPrice ?? b.price) - (a.discountPrice ?? a.price);
     if (sort === "rating") return b.rating - a.rating;
@@ -24,11 +41,11 @@ export function ShopListing({ title, products, crumbs }: { title: string; produc
       {crumbs && <Breadcrumbs items={crumbs} className="pb-0" />}
       <div className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
       <h1 className="text-2xl font-extrabold text-slate-900">{title}</h1>
-      <p className="mt-1 text-sm text-slate-500">{products.length} products</p>
+      <p className="mt-1 text-sm text-slate-500">{sorted.length} of {products.length} products</p>
 
       <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
         <div className="hidden lg:block">
-          <FilterPanel />
+          <FilterPanel filters={filters} onChange={setFilters} bounds={bounds} />
         </div>
 
         <div>
@@ -72,7 +89,7 @@ export function ShopListing({ title, products, crumbs }: { title: string; produc
               <ProductCard key={p.id} product={p} layout={layout} />
             ))}
             {sorted.length === 0 && (
-              <p className="col-span-full py-12 text-center text-sm text-slate-500">No products match this category yet.</p>
+              <p className="col-span-full py-12 text-center text-sm text-slate-500">No products match the selected filters.</p>
             )}
           </div>
         </div>
@@ -86,14 +103,15 @@ export function ShopListing({ title, products, crumbs }: { title: string; produc
             onClick={() => setFiltersOpen(false)}
             className="absolute inset-0 bg-slate-900/50"
           />
-          <div className="absolute inset-y-0 left-0 flex w-[85%] max-w-sm flex-col bg-white shadow-xl">
-            <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3.5">
-              <h2 className="font-bold text-slate-900">Filters</h2>
-              <button onClick={() => setFiltersOpen(false)} className="text-slate-400 hover:text-slate-700" aria-label="Close">✕</button>
-            </div>
-            <div className="flex-1 overflow-y-auto p-4">
-              <FilterPanel />
-            </div>
+          <div className="absolute inset-y-0 left-0 flex w-[85%] max-w-sm flex-col overflow-y-auto bg-white p-4 shadow-xl">
+            <button
+              onClick={() => setFiltersOpen(false)}
+              aria-label="Close"
+              className="mb-2 self-end text-slate-400 hover:text-slate-700"
+            >
+              ✕
+            </button>
+            <FilterPanel filters={filters} onChange={setFilters} bounds={bounds} />
           </div>
         </div>
       )}
