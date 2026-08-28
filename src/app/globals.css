@@ -68,3 +68,49 @@
 .range-thumb::-moz-range-track {
   background: transparent;
 }
+
+/* Drifting airflow lines (hero background) */
+.airflow-line {
+  stroke-dasharray: 14 18;
+  animation-name: airflowDrift;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes airflowDrift {
+  from { stroke-dashoffset: 0; }
+  to { stroke-dashoffset: -320; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .airflow-line {
+    animation: none;
+  }
+}
+
+/* Add-to-cart cool mist puff */
+.mist-puff {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+.mist-wisp {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  animation: mistPuff 700ms ease-out forwards;
+}
+@keyframes mistPuff {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scale(0.4) translate(0, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.6) translate(var(--mist-x, 0), var(--mist-y, -18px));
+  }
+}

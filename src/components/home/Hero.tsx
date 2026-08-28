@@ -1,6 +1,7 @@
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { IcePlate } from "@/components/ui/IcePlate";
+import { AirflowLines } from "@/components/ui/AirflowLines";
 
 const heroCards = [
   { icon: "local_shipping", title: "Free Delivery", sub: "Islandwide" },
@@ -18,6 +19,7 @@ export function Hero() {
         />
         <div className="absolute inset-0 hidden lg:block lg:bg-hero-fade" />
         <div className="pointer-events-none absolute -left-24 top-1/2 hidden h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-imt-blue/10 blur-3xl lg:block" />
+        <AirflowLines className="hidden lg:block" />
         <div className="relative mx-auto h-full max-w-[1600px] px-4 sm:px-6 lg:flex lg:h-full lg:items-center">
           <div className="max-w-[470px] py-8 lg:max-w-[700px] lg:py-0">
             <p className="mb-3.5 animate-fade-in-up text-[13px] font-semibold opacity-0 lg:text-lg">

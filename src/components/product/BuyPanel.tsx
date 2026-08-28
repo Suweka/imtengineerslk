@@ -8,6 +8,7 @@ import { getBrandById } from "@/data/brands";
 import { formatLKRShort } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/Button";
+import { MistPuff } from "@/components/ui/MistPuff";
 
 export function BuyPanel({ product, siblings = [] }: { product: Product; siblings?: Product[] }) {
   const router = useRouter();
@@ -17,6 +18,7 @@ export function BuyPanel({ product, siblings = [] }: { product: Product; sibling
   const [qty, setQty] = useState(1);
   const [installSelected, setInstallSelected] = useState(!product.requiresSiteSurvey);
   const [added, setAdded] = useState(false);
+  const [puffKey, setPuffKey] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
   const [wishlistBusy, setWishlistBusy] = useState(false);
 
@@ -66,6 +68,7 @@ export function BuyPanel({ product, siblings = [] }: { product: Product; sibling
       spec: `${product.capacityHP} HP · ${product.refrigerant} · Model ${product.id.toUpperCase()}`,
       installation: { selected: installSelected, fee: product.installationFee, requiresSiteSurvey: product.requiresSiteSurvey },
     });
+    setPuffKey((k) => k + 1);
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   }
@@ -143,9 +146,12 @@ export function BuyPanel({ product, siblings = [] }: { product: Product; sibling
           <span className="w-8 text-center text-sm font-semibold">{qty}</span>
           <button onClick={() => setQty((q) => q + 1)} className="px-3 py-2.5 text-slate-600">+</button>
         </div>
-        <Button className="flex-1" onClick={handleAddToCart}>
-          {added ? "Added ✓" : "🛒 Add to Cart"}
-        </Button>
+        <div className="relative flex-1">
+          <Button className="w-full" onClick={handleAddToCart}>
+            {added ? "Added ✓" : "🛒 Add to Cart"}
+          </Button>
+          <MistPuff triggerKey={puffKey} />
+        </div>
         <button
           aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
           onClick={handleToggleWishlist}
