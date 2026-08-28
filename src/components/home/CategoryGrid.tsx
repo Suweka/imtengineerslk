@@ -27,6 +27,7 @@ export function CategoryGrid() {
             >
               <div className="overflow-hidden rounded-lg">
                 <ProductImageFrame
+                  src={c.image}
                   alt={c.name}
                   label={c.name.split(" ")[0]}
                   className="aspect-square w-full transition-transform duration-300 group-hover:scale-105"

@@ -3,6 +3,7 @@ export type Category = {
   name: string;
   slug: string;
   fromPrice: number;
+  image?: string;
 };
 
 export type Brand = {
