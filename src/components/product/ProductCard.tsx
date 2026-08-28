@@ -1,20 +1,17 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { Product } from "@/lib/types";
 import { getBrandById } from "@/data/brands";
 import { ProductImageFrame } from "./ProductImageFrame";
 import { Badge } from "@/components/ui/Badge";
 import { StarRating } from "@/components/ui/StarRating";
-import { MistPuff } from "@/components/ui/MistPuff";
 import { formatLKRShort } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 
 export function ProductCard({ product, layout = "grid" }: { product: Product; layout?: "grid" | "list" }) {
   const brand = getBrandById(product.brandId);
   const { addItem } = useCart();
-  const [puffKey, setPuffKey] = useState(0);
   const price = product.discountPrice ?? product.price;
   const discountPct = product.discountPrice
     ? Math.round(((product.price - product.discountPrice) / product.price) * 100)
@@ -37,7 +34,6 @@ export function ProductCard({ product, layout = "grid" }: { product: Product; la
         requiresSiteSurvey: product.requiresSiteSurvey,
       },
     });
-    setPuffKey((k) => k + 1);
   }
 
   return (
@@ -90,15 +86,12 @@ export function ProductCard({ product, layout = "grid" }: { product: Product; la
               <div className="text-xs text-slate-500">+ install from {formatLKRShort(product.installationFee)}</div>
             )}
           </div>
-          <div className="relative">
-            <button
-              onClick={handleAddToCart}
-              className="flex items-center gap-1.5 rounded-lg bg-imt-blue px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-imt-navy"
-            >
-              Add to Cart
-            </button>
-            <MistPuff triggerKey={puffKey} />
-          </div>
+          <button
+            onClick={handleAddToCart}
+            className="flex items-center gap-1.5 rounded-lg bg-imt-blue px-3 py-2 text-sm font-semibold text-white transition-colors hover:bg-imt-navy"
+          >
+            Add to Cart
+          </button>
         </div>
       </div>
     </Link>
