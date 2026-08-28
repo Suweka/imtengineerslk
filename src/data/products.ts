@@ -194,7 +194,7 @@ function buildProducts(): Product[] {
           images: [],
           stock: 10,
           isFeatured: variant.acType === "inverter" && tier.btu === 12000,
-          isBestSeller: false,
+          isBestSeller: variant.acType === "inverter" && tier.btu === 12000,
           rating: 4,
           reviewCount: 0,
           soldThisYear: 0,

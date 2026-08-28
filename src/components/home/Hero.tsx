@@ -1,12 +1,17 @@
 import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { IcePlate } from "@/components/ui/IcePlate";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { siteSettings } from "@/data/testimonials";
+import { brands } from "@/data/brands";
 
 const heroCards = [
   { icon: "local_shipping", title: "Free Delivery", sub: "Islandwide" },
   { icon: "verified_user", title: "2 Year Warranty", sub: "On All Products" },
   { icon: "build", title: "Professional Install", sub: "Islandwide Service" },
 ];
+
+const yearsInBusiness = new Date().getFullYear() - siteSettings.foundedYear;
 
 export function Hero() {
   return (
@@ -16,6 +21,7 @@ export function Hero() {
           className="absolute inset-0 hidden bg-cover bg-center bg-no-repeat lg:block"
           style={{ backgroundImage: "url('/home-hero.png')" }}
         />
+        <div className="pointer-events-none absolute right-[6%] top-1/2 hidden h-[380px] w-[380px] -translate-y-1/2 rounded-full bg-white/50 blur-[70px] lg:block" />
         <div className="absolute inset-0 hidden lg:block lg:bg-hero-fade" />
         <div className="pointer-events-none absolute -left-24 top-1/2 hidden h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-imt-blue/10 blur-3xl lg:block" />
         <div className="relative mx-auto h-full max-w-[1600px] px-4 sm:px-6 lg:flex lg:h-full lg:items-center">
@@ -52,6 +58,22 @@ export function Hero() {
               >
                 View Deals <Icon name="sell" size={18} />
               </ButtonLink>
+            </div>
+
+            <div className="mt-6 flex animate-fade-in-up items-center gap-6 opacity-0 [animation-delay:320ms] lg:mt-8">
+              <div>
+                <div className="text-2xl font-extrabold text-imt-navy lg:text-3xl">
+                  <AnimatedCounter value={yearsInBusiness} suffix="+" />
+                </div>
+                <div className="text-[11px] font-medium uppercase tracking-wide text-[#6B7A88] lg:text-xs">Years of Service</div>
+              </div>
+              <div className="h-9 w-px bg-slate-300/70" />
+              <div>
+                <div className="text-2xl font-extrabold text-imt-navy lg:text-3xl">
+                  <AnimatedCounter value={brands.length} />
+                </div>
+                <div className="text-[11px] font-medium uppercase tracking-wide text-[#6B7A88] lg:text-xs">Trusted Brands</div>
+              </div>
             </div>
           </div>
 
