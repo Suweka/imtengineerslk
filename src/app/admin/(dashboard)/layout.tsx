@@ -8,7 +8,7 @@ export const metadata = { title: "Admin | IMT Engineers" };
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/admin/login");
+  if (!session || session.user.role !== "admin") redirect("/admin/login");
 
   return (
     <AuthSessionProvider>

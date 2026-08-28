@@ -2,18 +2,52 @@
 
 import { use, useEffect, useState } from "react";
 import Link from "next/link";
-import { Order, getOrder } from "@/lib/orders";
+import { CartItem } from "@/lib/types";
 import { formatLKRShort } from "@/lib/format";
 import { siteSettings } from "@/data/testimonials";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 import { Button } from "@/components/ui/Button";
+
+type Order = {
+  id: string;
+  orderNumber: string;
+  items: CartItem[];
+  subtotal: number;
+  installationTotal: number;
+  deliveryFee: number;
+  total: number;
+  fulfillment: "delivery" | "showroom-pickup";
+  customerName: string;
+  phone: string;
+  email: string | null;
+  address: string | null;
+  city: string | null;
+  district: string | null;
+  preferredInstallDate: string | null;
+  createdAt: string;
+};
 
 export default function OrderConfirmationPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const [order, setOrder] = useState<Order | null | undefined>(undefined);
 
   useEffect(() => {
-    setOrder(getOrder(id) ?? null);
+    fetch(`/api/orders/${id}`)
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) =>
+        setOrder(
+          data
+            ? {
+                ...data,
+                subtotal: Number(data.subtotal),
+                installationTotal: Number(data.installationTotal),
+                deliveryFee: Number(data.deliveryFee),
+                total: Number(data.total),
+              }
+            : null
+        )
+      )
+      .catch(() => setOrder(null));
   }, [id]);
 
   if (order === undefined) return null;

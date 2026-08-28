@@ -1,3 +1,5 @@
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { sendOrderNotification } from "@/lib/whatsapp";
 import { sendOrderOwnerAlert } from "@/lib/email";
@@ -5,12 +7,15 @@ import { sendOrderOwnerAlert } from "@/lib/email";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.role === "customer" ? session.user.id : undefined;
 
     const orderNumber = `IMT-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
     const order = await prisma.order.create({
       data: {
         orderNumber,
+        userId,
         items: body.items,
         subtotal: body.subtotal,
         installationTotal: body.installationTotal,

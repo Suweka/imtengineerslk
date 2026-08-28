@@ -7,7 +7,7 @@ import { removeBackground } from "@/lib/background-removal";
 
 async function requireAdmin() {
   const session = await getServerSession(authOptions);
-  if (!session) return null;
+  if (!session || session.user.role !== "admin") return null;
   return session;
 }
 

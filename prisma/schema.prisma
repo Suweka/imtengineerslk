@@ -8,11 +8,15 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String     @id @default(cuid())
+  email        String     @unique
   passwordHash String
-  role         String   @default("admin")
-  createdAt    DateTime @default(now())
+  name         String?
+  phone        String?
+  role         String     @default("admin") // "admin" | "customer"
+  createdAt    DateTime   @default(now())
+  orders       Order[]
+  wishlist     Wishlist[]
 }
 
 model Product {
@@ -65,6 +69,8 @@ model Category {
 model Order {
   id                   String    @id @default(cuid())
   orderNumber          String    @unique
+  user                 User?     @relation(fields: [userId], references: [id])
+  userId               String?
   items                Json
   subtotal             Decimal
   installationTotal    Decimal   @default(0)
@@ -135,4 +141,14 @@ model PageContent {
   title     String?
   body      String
   updatedAt DateTime @updatedAt
+}
+
+model Wishlist {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
 }

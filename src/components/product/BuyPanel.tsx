@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { Product } from "@/lib/types";
 import { getBrandById } from "@/data/brands";
 import { formatLKRShort } from "@/lib/format";
@@ -10,11 +11,45 @@ import { Button } from "@/components/ui/Button";
 
 export function BuyPanel({ product, siblings = [] }: { product: Product; siblings?: Product[] }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const brand = getBrandById(product.brandId);
   const { addItem } = useCart();
   const [qty, setQty] = useState(1);
   const [installSelected, setInstallSelected] = useState(!product.requiresSiteSurvey);
   const [added, setAdded] = useState(false);
+  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlistBusy, setWishlistBusy] = useState(false);
+
+  useEffect(() => {
+    if (session?.user?.role !== "customer") return;
+    fetch("/api/wishlist")
+      .then((res) => (res.ok ? res.json() : []))
+      .then((ids: string[]) => setWishlisted(ids.includes(product.id)))
+      .catch(() => {});
+  }, [session, product.id]);
+
+  async function handleToggleWishlist() {
+    if (session?.user?.role !== "customer") {
+      router.push("/account/login");
+      return;
+    }
+    setWishlistBusy(true);
+    try {
+      if (wishlisted) {
+        await fetch(`/api/wishlist?productId=${product.id}`, { method: "DELETE" });
+        setWishlisted(false);
+      } else {
+        await fetch("/api/wishlist", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ productId: product.id }),
+        });
+        setWishlisted(true);
+      }
+    } finally {
+      setWishlistBusy(false);
+    }
+  }
 
   const price = product.discountPrice ?? product.price;
   const savings = product.discountPrice ? product.price - product.discountPrice : 0;
@@ -111,8 +146,15 @@ export function BuyPanel({ product, siblings = [] }: { product: Product; sibling
         <Button className="flex-1" onClick={handleAddToCart}>
           {added ? "Added ✓" : "🛒 Add to Cart"}
         </Button>
-        <button aria-label="Add to wishlist" className="rounded-lg border border-slate-300 p-2.5 text-slate-500 hover:text-imt-red">
-          ♡
+        <button
+          aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
+          onClick={handleToggleWishlist}
+          disabled={wishlistBusy}
+          className={`rounded-lg border p-2.5 transition-colors disabled:opacity-50 ${
+            wishlisted ? "border-imt-red bg-imt-red/5 text-imt-red" : "border-slate-300 text-slate-500 hover:text-imt-red"
+          }`}
+        >
+          {wishlisted ? "♥" : "♡"}
         </button>
       </div>
 

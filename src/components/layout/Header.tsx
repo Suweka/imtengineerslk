@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
 import { TopBar } from "./TopBar";
 import { categories } from "@/data/categories";
 import { brands } from "@/data/brands";
@@ -22,9 +23,11 @@ const navLinks = [
 
 export function Header() {
   const { itemCount, total } = useCart();
+  const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
+  const accountHref = session?.user?.role === "customer" ? "/account" : "/account/login";
 
   const [cartBump, setCartBump] = useState(false);
   const prevCount = useRef(itemCount);
@@ -119,7 +122,7 @@ export function Header() {
           <button aria-label="Search" className="text-slate-600 hover:text-imt-blue">
             <Icon name="search" size={20} />
           </button>
-          <Link href="/admin" aria-label="Account" className="hidden text-slate-600 hover:text-imt-blue sm:block">
+          <Link href={accountHref} aria-label="Account" className="hidden text-slate-600 hover:text-imt-blue sm:block">
             <Icon name="person" size={20} />
           </Link>
           <div className="group relative">

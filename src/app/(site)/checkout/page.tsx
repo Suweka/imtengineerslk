@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useCart } from "@/lib/cart-context";
 import { formatLKRShort } from "@/lib/format";
 import { nextWorkingDays } from "@/lib/dates";
-import { generateOrderNumber, saveOrder } from "@/lib/orders";
 import { siteSettings } from "@/data/testimonials";
 import { Button } from "@/components/ui/Button";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
@@ -38,13 +37,14 @@ export default function CheckoutPage() {
 
   const canSubmit = name && phone && nic && (fulfillment === "showroom-pickup" || (address && city));
 
-  function handlePlaceOrder() {
+  const [submitError, setSubmitError] = useState("");
+
+  async function handlePlaceOrder() {
     if (!canSubmit || items.length === 0) return;
     setSubmitting(true);
+    setSubmitError("");
 
-    const order = {
-      id: crypto.randomUUID(),
-      orderNumber: generateOrderNumber(),
+    const payload = {
       items,
       subtotal,
       installationTotal,
@@ -60,14 +60,24 @@ export default function CheckoutPage() {
       district: fulfillment === "delivery" ? district : undefined,
       preferredInstallDate: installDate,
       notes,
-      createdAt: new Date().toISOString(),
     };
 
-    saveOrder(order);
-    // TODO (backend): POST /api/orders — save to DB, then push to WhatsApp via lib/whatsapp.ts.
-    // The DB write must always succeed independently of the WhatsApp push result.
-    window.localStorage.removeItem("imt-cart-v1");
-    router.push(`/order-confirmation/${order.id}`);
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("Order creation failed");
+      const { id } = await res.json();
+
+      window.localStorage.removeItem("imt-cart-v1");
+      router.push(`/order-confirmation/${id}`);
+    } catch (err) {
+      console.error(err);
+      setSubmitError("Something went wrong placing your order. Please try again or call us.");
+      setSubmitting(false);
+    }
   }
 
   if (items.length === 0) {
@@ -200,6 +210,10 @@ export default function CheckoutPage() {
           <div className="mt-4 rounded-lg bg-white/10 p-3 text-xs text-slate-200">
             💳 {fulfillment === "showroom-pickup" ? "Pay at our showroom — cash or card. Your order is held for 5 days." : "Payment is made on delivery or at our showroom — cash or card. Nothing is charged online."}
           </div>
+
+          {submitError && (
+            <div className="mt-4 rounded-lg bg-red-500/20 p-3 text-sm text-red-100">{submitError}</div>
+          )}
 
           <Button
             className="mt-4 w-full bg-imt-gold-start text-imt-navy hover:bg-imt-gold-end"
