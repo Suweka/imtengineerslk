@@ -94,6 +94,71 @@ function slugify(...parts: (string | number)[]) {
     .replace(/(^-|-$)/g, "");
 }
 
+// The catalog price above is shown to customers as the discounted/real
+// price. Each product also shows a struck-through "original" price,
+// real price + this markup, so the discount is honest rather than
+// invented on the fly at render time. Values fixed per product so
+// re-seeding doesn't reshuffle prices.
+const discountMarkups: Record<string, number> = {
+  "prod-daikin-12000-inverter": 23000,
+  "prod-daikin-12000-non-inverter": 34000,
+  "prod-daikin-9000-inverter": 26000,
+  "prod-daikin-9000-non-inverter": 31000,
+  "prod-daikin-24000-inverter": 23000,
+  "prod-daikin-24000-non-inverter": 34000,
+  "prod-daikin-18000-inverter": 34000,
+  "prod-daikin-18000-non-inverter": 28000,
+  "prod-hisense-12000-inverter": 23000,
+  "prod-hisense-12000-non-inverter": 28000,
+  "prod-hisense-9000-inverter": 20000,
+  "prod-hisense-24000-inverter": 28000,
+  "prod-hisense-24000-non-inverter": 22000,
+  "prod-hisense-18000-inverter": 26000,
+  "prod-hisense-18000-non-inverter": 31000,
+  "prod-lg-12000-inverter": 22000,
+  "prod-lg-9000-inverter": 29000,
+  "prod-lg-24000-inverter": 29000,
+  "prod-lg-18000-inverter": 30000,
+  "prod-midea-12000-inverter": 35000,
+  "prod-midea-12000-non-inverter": 28000,
+  "prod-midea-9000-inverter": 28000,
+  "prod-midea-9000-non-inverter": 33000,
+  "prod-midea-24000-inverter": 23000,
+  "prod-midea-24000-non-inverter": 31000,
+  "prod-midea-18000-inverter": 21000,
+  "prod-midea-18000-non-inverter": 33000,
+  "prod-panasonic-12000-inverter": 21000,
+  "prod-panasonic-12000-non-inverter": 23000,
+  "prod-panasonic-9000-inverter": 22000,
+  "prod-panasonic-9000-non-inverter": 25000,
+  "prod-panasonic-24000-inverter": 34000,
+  "prod-panasonic-24000-non-inverter": 20000,
+  "prod-panasonic-18000-inverter": 22000,
+  "prod-panasonic-18000-non-inverter": 27000,
+  "prod-sharp-12000-inverter": 34000,
+  "prod-sharp-12000-non-inverter": 26000,
+  "prod-sharp-24000-inverter": 34000,
+  "prod-sharp-24000-non-inverter": 29000,
+  "prod-sharp-18000-inverter": 24000,
+  "prod-sharp-18000-non-inverter": 24000,
+  "prod-tcl-12000-inverter": 31000,
+  "prod-tcl-12000-non-inverter": 30000,
+  "prod-tcl-9000-inverter": 24000,
+  "prod-tcl-9000-non-inverter": 22000,
+  "prod-tcl-24000-inverter": 35000,
+  "prod-tcl-24000-non-inverter": 21000,
+  "prod-tcl-18000-inverter": 27000,
+  "prod-tcl-18000-non-inverter": 25000,
+  "prod-teco-12000-inverter": 30000,
+  "prod-teco-12000-non-inverter": 22000,
+  "prod-teco-9000-inverter": 22000,
+  "prod-teco-9000-non-inverter": 31000,
+  "prod-teco-24000-inverter": 21000,
+  "prod-teco-24000-non-inverter": 23000,
+  "prod-teco-18000-inverter": 31000,
+  "prod-teco-18000-non-inverter": 27000,
+};
+
 function buildProducts(): Product[] {
   const list: Product[] = [];
 
@@ -107,9 +172,11 @@ function buildProducts(): Product[] {
         const warranty = warrantyFor(row.origin);
         const typeLabel = variant.acType === "inverter" ? "Inverter" : "Non-Inverter";
         const name = `${row.brandLabel} ${tier.hp}HP ${typeLabel} Split AC`;
+        const id = slugify("prod", row.brandId.replace("brand-", ""), tier.btu, variant.acType);
+        const markup = discountMarkups[id] ?? 25000;
 
         list.push({
-          id: slugify("prod", row.brandId.replace("brand-", ""), tier.btu, variant.acType),
+          id,
           slug: slugify(row.brandLabel, tier.hp, "hp", typeLabel, "split-ac"),
           name,
           brandId: row.brandId,
@@ -119,7 +186,8 @@ function buildProducts(): Product[] {
           energyRating: variant.acType === "inverter" ? "5 star" : "3 star",
           acType: variant.acType,
           refrigerant: "R32",
-          price: variant.price,
+          price: variant.price + markup,
+          discountPrice: variant.price,
           warrantyParts: warranty.parts,
           warrantyCompressor: warranty.compressor,
           recommendedRoomSize: tier.roomSize,
