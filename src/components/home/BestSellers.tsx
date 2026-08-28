@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { getBestSellers } from "@/data/products";
+import { getBestSellersDb } from "@/lib/products-db";
 import { ProductCard } from "@/components/product/ProductCard";
 
-export function BestSellers() {
-  const products = getBestSellers().slice(0, 4);
+export async function BestSellers() {
+  const products = (await getBestSellersDb()).slice(0, 4);
   return (
     <section className="bg-slate-50 py-14">
       <div className="mx-auto max-w-[1600px] px-4 sm:px-6">

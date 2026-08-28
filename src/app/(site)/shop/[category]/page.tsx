@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { categories, getCategoryBySlug } from "@/data/categories";
-import { getProductsByCategory } from "@/data/products";
+import { getProductsByCategoryDb } from "@/lib/products-db";
 import { ShopListing } from "@/components/shop/ShopListing";
 import { InfoBar, trustItems } from "@/components/home/InfoBar";
+
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return categories.map((c) => ({ category: c.slug }));
@@ -19,7 +21,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ categ
   const category = getCategoryBySlug(categorySlug);
   if (!category) notFound();
 
-  const categoryProducts = getProductsByCategory(category.id);
+  const categoryProducts = await getProductsByCategoryDb(category.id);
 
   return (
     <>

@@ -4,12 +4,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Product } from "@/lib/types";
 import { getBrandById } from "@/data/brands";
-import { products } from "@/data/products";
 import { formatLKRShort } from "@/lib/format";
 import { useCart } from "@/lib/cart-context";
 import { Button } from "@/components/ui/Button";
 
-export function BuyPanel({ product }: { product: Product }) {
+export function BuyPanel({ product, siblings = [] }: { product: Product; siblings?: Product[] }) {
   const router = useRouter();
   const brand = getBrandById(product.brandId);
   const { addItem } = useCart();
@@ -19,10 +18,6 @@ export function BuyPanel({ product }: { product: Product }) {
 
   const price = product.discountPrice ?? product.price;
   const savings = product.discountPrice ? product.price - product.discountPrice : 0;
-
-  const siblings = products
-    .filter((p) => p.brandId === product.brandId && p.categoryId === product.categoryId && p.acType === product.acType)
-    .sort((a, b) => a.capacityHP - b.capacityHP);
 
   function handleAddToCart() {
     addItem({

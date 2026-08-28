@@ -7,6 +7,8 @@ import { BrandStrip } from "@/components/home/BrandStrip";
 import { Testimonials } from "@/components/home/Testimonials";
 import { InfoBar, secureItems, trustItems } from "@/components/home/InfoBar";
 
+export const dynamic = "force-dynamic";
+
 export default function Home() {
   return (
     <>

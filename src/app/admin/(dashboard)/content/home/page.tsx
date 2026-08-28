@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
-import { products } from "@/data/products";
+import { useEffect, useState } from "react";
+import { Product } from "@/lib/types";
 import { getBrandById } from "@/data/brands";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { PreviewBanner } from "@/components/admin/PreviewBanner";
@@ -25,19 +25,36 @@ const initialValueProps = [
 export default function AdminHomeContentPage() {
   const [hero, setHero] = useState(initialHero);
   const [valueProps, setValueProps] = useState(initialValueProps);
-  const [featuredIds, setFeaturedIds] = useState(new Set(products.filter((p) => p.isFeatured).map((p) => p.id)));
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [savingFeatured, setSavingFeatured] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
 
-  function toggleFeatured(id: string) {
-    setFeaturedIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id); else next.add(id);
-      return next;
-    });
+  useEffect(() => {
+    fetch("/api/admin/products")
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .finally(() => setLoadingProducts(false));
+  }, []);
+
+  async function toggleFeatured(product: Product) {
+    setSavingFeatured(product.id);
+    try {
+      const res = await fetch(`/api/admin/products/${product.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isFeatured: !product.isFeatured }),
+      });
+      const saved = await res.json();
+      setProducts((prev) => prev.map((p) => (p.id === saved.id ? saved : p)));
+    } finally {
+      setSavingFeatured(null);
+    }
   }
 
   function handleSave() {
-    // TODO (backend): PATCH /api/admin/content/home-hero
+    // TODO (backend): PATCH /api/admin/content/home-hero — hero copy and
+    // value props aren't stored anywhere yet; this section stays preview-only.
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   }
@@ -45,7 +62,7 @@ export default function AdminHomeContentPage() {
   return (
     <>
       <AdminTopbar title="Home Page" subtitle="Hero banner, value props and best-seller picks" actions={<Button onClick={handleSave}>{saved ? "Saved ✓" : "Save changes"}</Button>} />
-      <PreviewBanner>Edits here are held in local state only for this preview.</PreviewBanner>
+      <PreviewBanner>Hero banner and value props below are held in local state only for this preview. Best-seller picks save live to the database.</PreviewBanner>
 
       <div className="flex-1 space-y-6 p-6">
         <section className="rounded-xl border border-slate-200 bg-white p-5">
@@ -84,9 +101,16 @@ export default function AdminHomeContentPage() {
           <h2 className="font-bold text-slate-900">Best-seller picks</h2>
           <p className="mt-1 text-xs text-slate-500">Choose which products appear in the &ldquo;Best Selling Inverter ACs&rdquo; strip on the homepage.</p>
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            {loadingProducts && <p className="text-sm text-slate-400">Loading products…</p>}
             {products.map((p) => (
               <label key={p.id} className="flex items-center gap-2 rounded-lg border border-slate-100 px-3 py-2 text-sm">
-                <input type="checkbox" checked={featuredIds.has(p.id)} onChange={() => toggleFeatured(p.id)} className="rounded border-slate-300 text-imt-blue" />
+                <input
+                  type="checkbox"
+                  checked={p.isFeatured}
+                  disabled={savingFeatured === p.id}
+                  onChange={() => toggleFeatured(p)}
+                  className="rounded border-slate-300 text-imt-blue"
+                />
                 <span>{p.name} <span className="text-xs text-slate-400">({getBrandById(p.brandId)?.name})</span></span>
               </label>
             ))}

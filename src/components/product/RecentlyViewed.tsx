@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { products } from "@/data/products";
+import { Product } from "@/lib/types";
 import { ProductCard } from "./ProductCard";
 import { getRecentlyViewed, recordViewed } from "@/lib/recently-viewed";
 
@@ -13,21 +13,21 @@ export function TrackViewed({ productId }: { productId: string }) {
 }
 
 export function RecentlyViewed({ excludeId }: { excludeId?: string }) {
-  const [ids, setIds] = useState<string[] | null>(null);
+  const [items, setItems] = useState<Product[] | null>(null);
 
   useEffect(() => {
-    setIds(getRecentlyViewed());
-  }, []);
+    const ids = getRecentlyViewed().filter((id) => id !== excludeId).slice(0, 4);
+    if (ids.length === 0) {
+      setItems([]);
+      return;
+    }
+    fetch(`/api/products?ids=${ids.join(",")}`)
+      .then((res) => res.json())
+      .then(setItems)
+      .catch(() => setItems([]));
+  }, [excludeId]);
 
-  if (!ids) return null;
-
-  const items = ids
-    .filter((id) => id !== excludeId)
-    .map((id) => products.find((p) => p.id === id))
-    .filter((p): p is (typeof products)[number] => Boolean(p))
-    .slice(0, 4);
-
-  if (items.length === 0) return null;
+  if (!items || items.length === 0) return null;
 
   return (
     <section className="bg-white py-14">

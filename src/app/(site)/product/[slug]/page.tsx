@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { getProductBySlug, getRelatedProducts, products } from "@/data/products";
+import { getProductBySlugDb, getRelatedProductsDb, getSiblingProductsDb } from "@/lib/products-db";
 import { getBrandById } from "@/data/brands";
 import { categories } from "@/data/categories";
 import { ProductGallery } from "@/components/product/ProductGallery";
@@ -14,24 +14,23 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { InfoBar, trustItems } from "@/components/home/InfoBar";
 import { RecentlyViewed, TrackViewed } from "@/components/product/RecentlyViewed";
 
-export function generateStaticParams() {
-  return products.map((p) => ({ slug: p.slug }));
-}
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugDb(slug);
   return { title: product ? `${product.name} | IMT Engineers` : "Product | IMT Engineers" };
 }
 
 export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlugDb(slug);
   if (!product) notFound();
 
   const brand = getBrandById(product.brandId);
   const category = categories.find((c) => c.id === product.categoryId);
-  const related = getRelatedProducts(product);
+  const related = await getRelatedProductsDb(product);
+  const siblings = await getSiblingProductsDb(product);
   const isCeilingMounted = product.categoryId === "cat-cassette" || product.categoryId === "cat-ducted";
 
   return (
@@ -66,7 +65,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
             </div>
 
             <div className="mt-6">
-              <BuyPanel product={product} />
+              <BuyPanel product={product} siblings={siblings} />
             </div>
           </div>
         </div>

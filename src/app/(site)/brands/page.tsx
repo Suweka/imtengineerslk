@@ -1,11 +1,13 @@
 import { brands } from "@/data/brands";
-import { products } from "@/data/products";
+import { getAllProducts } from "@/lib/products-db";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 import { ProductCard } from "@/components/product/ProductCard";
 
 export const metadata = { title: "Brands | IMT Engineers" };
+export const dynamic = "force-dynamic";
 
-export default function BrandsPage() {
+export default async function BrandsPage() {
+  const products = await getAllProducts();
   return (
     <div className="mx-auto max-w-[1600px] px-4 py-10 sm:px-6">
       <div className="text-center">
