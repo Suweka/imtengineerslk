@@ -2,14 +2,7 @@
 
 import { useState } from "react";
 import { GlassPanel } from "@/components/ui/GlassPanel";
-
-function suggestCapacity(sqft: number) {
-  if (sqft <= 120) return "1.0 HP (9,000 BTU/hr)";
-  if (sqft <= 180) return "1.5 HP (12,000 BTU/hr)";
-  if (sqft <= 260) return "2.0 HP (18,000 BTU/hr)";
-  if (sqft <= 320) return "2.5 HP (24,000 BTU/hr)";
-  return "3.0 HP or ducted system — talk to our engineers";
-}
+import { suggestCapacity } from "@/lib/room-size";
 
 export function RoomSizeCalculator() {
   const [length, setLength] = useState("");
@@ -46,7 +39,7 @@ export function RoomSizeCalculator() {
       {valid && (
         <div className="mt-3 rounded-lg bg-imt-blue/10 p-3 text-sm">
           <p className="text-slate-600">Room area: <strong>{sqft.toFixed(0)} sq ft</strong></p>
-          <p className="mt-1 font-semibold text-imt-navy">Suggested: {suggestCapacity(sqft)}</p>
+          <p className="mt-1 font-semibold text-imt-navy">Suggested: {suggestCapacity(sqft).label}</p>
         </div>
       )}
     </GlassPanel>

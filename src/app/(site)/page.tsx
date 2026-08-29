@@ -1,6 +1,7 @@
 import { Hero } from "@/components/home/Hero";
 import { ValueProps } from "@/components/home/ValueProps";
 import { CategoryGrid } from "@/components/home/CategoryGrid";
+import { RoomSizeWidget } from "@/components/home/RoomSizeWidget";
 import { BestSellers } from "@/components/home/BestSellers";
 import { InstallationBand } from "@/components/home/InstallationBand";
 import { BrandStrip } from "@/components/home/BrandStrip";
@@ -15,6 +16,7 @@ export default function Home() {
       <Hero />
       <ValueProps />
       <CategoryGrid />
+      <RoomSizeWidget />
       <InfoBar items={secureItems} tone="dark" />
       <BestSellers />
       <InstallationBand />
