@@ -120,7 +120,7 @@ export function Header() {
           <button aria-label="Search" className="text-slate-600 hover:text-imt-blue">
             <Icon name="search" size={20} />
           </button>
-          <Link href={accountHref} aria-label="Account" className="hidden text-slate-600 hover:text-imt-blue sm:block">
+          <Link href={accountHref} aria-label="Account" className="text-slate-600 hover:text-imt-blue">
             <Icon name="person" size={20} />
           </Link>
           <div className="group relative">
