@@ -1,6 +1,21 @@
 import { prisma } from "@/lib/prisma";
 import { Product } from "@/lib/types";
+import { brands } from "@/data/brands";
 import type { Product as PrismaProduct } from "@prisma/client";
+
+const brandPriority = new Map(brands.map((b, i) => [b.id, i]));
+function brandRank(brandId: string) {
+  return brandPriority.get(brandId) ?? brands.length;
+}
+
+// Default display order across the storefront: Panasonic/LG first,
+// then Hisense/TCL/Sharp, then Midea/Teco/Daikin (per brands.ts order),
+// then by capacity within a brand.
+function sortByBrandPriority(products: Product[]): Product[] {
+  return [...products].sort(
+    (a, b) => brandRank(a.brandId) - brandRank(b.brandId) || a.capacityHP - b.capacityHP
+  );
+}
 
 function toStorefrontProduct(p: PrismaProduct): Product {
   return {
@@ -45,7 +60,7 @@ function toStorefrontProduct(p: PrismaProduct): Product {
 
 export async function getAllProducts(): Promise<Product[]> {
   const rows = await prisma.product.findMany({ orderBy: { createdAt: "desc" } });
-  return rows.map(toStorefrontProduct);
+  return sortByBrandPriority(rows.map(toStorefrontProduct));
 }
 
 export async function getProductBySlugDb(slug: string): Promise<Product | null> {
@@ -58,7 +73,7 @@ export async function getProductsByCategoryDb(categoryId: string): Promise<Produ
     where: { categoryId },
     orderBy: { createdAt: "desc" },
   });
-  return rows.map(toStorefrontProduct);
+  return sortByBrandPriority(rows.map(toStorefrontProduct));
 }
 
 export async function getBestSellersDb(): Promise<Product[]> {
@@ -66,7 +81,7 @@ export async function getBestSellersDb(): Promise<Product[]> {
     where: { isFeatured: true },
     orderBy: { createdAt: "desc" },
   });
-  return rows.map(toStorefrontProduct);
+  return sortByBrandPriority(rows.map(toStorefrontProduct));
 }
 
 export async function getSiblingProductsDb(product: Product): Promise<Product[]> {

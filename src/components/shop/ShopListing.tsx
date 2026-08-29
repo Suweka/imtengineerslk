@@ -2,10 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { Product } from "@/lib/types";
+import { brands } from "@/data/brands";
 import { FilterPanel, ShopFilters, emptyFilters } from "./FilterPanel";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Breadcrumbs, Crumb } from "@/components/ui/Breadcrumbs";
 import { RecentlyViewed } from "@/components/product/RecentlyViewed";
+
+const brandPriority = new Map(brands.map((b, i) => [b.id, i]));
+function brandRank(brandId: string) {
+  return brandPriority.get(brandId) ?? brands.length;
+}
 
 export function ShopListing({ title, products, crumbs }: { title: string; products: Product[]; crumbs?: Crumb[] }) {
   const [layout, setLayout] = useState<"grid" | "list">("grid");
@@ -33,7 +39,9 @@ export function ShopListing({ title, products, crumbs }: { title: string; produc
     if (sort === "price-asc") return (a.discountPrice ?? a.price) - (b.discountPrice ?? b.price);
     if (sort === "price-desc") return (b.discountPrice ?? b.price) - (a.discountPrice ?? a.price);
     if (sort === "rating") return b.rating - a.rating;
-    return (b.soldThisYear ?? 0) - (a.soldThisYear ?? 0);
+    // "Popular" (default): brand priority first (Panasonic/LG, then
+    // Hisense/TCL/Sharp, then Midea/Teco/Daikin), then capacity within brand.
+    return brandRank(a.brandId) - brandRank(b.brandId) || a.capacityHP - b.capacityHP;
   });
 
   return (
