@@ -21,24 +21,17 @@ export function CategoryGrid() {
           <Reveal key={c.id} delay={i * 60}>
             <Link
               href={`/shop/${c.slug}`}
-              className={`group relative block overflow-hidden rounded-xl border border-imt-blue/10 bg-white p-3 text-left shadow-[inset_0_0_0_1px_rgba(28,117,188,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-imt-blue/25 hover:shadow-[inset_0_0_24px_rgba(28,117,188,0.16),0_12px_28px_rgba(28,117,188,0.14)] ${
+              className={`group relative block overflow-hidden rounded-xl bg-gradient-to-br from-white via-sky-50/70 to-sky-100/50 p-3 text-left shadow-[inset_0_0_0_1.5px_rgba(56,189,248,0.45),0_4px_14px_rgba(28,117,188,0.08)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[inset_0_0_0_1.5px_rgba(56,189,248,0.9),inset_0_0_28px_4px_rgba(56,189,248,0.4),0_16px_32px_rgba(28,117,188,0.2)] ${
                 i === categories.length - 1 ? "col-span-2 sm:col-span-1" : ""
               }`}
             >
-              {/* Cool air glow escaping from the inner border */}
+              {/* Icy shine highlight, top-left */}
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute inset-0 rounded-xl opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                style={{
-                  boxShadow: "inset 0 0 0 1.5px rgba(56,189,248,0.55), inset 0 0 20px 2px rgba(56,189,248,0.35)",
-                }}
-              />
-              <span
-                aria-hidden="true"
-                className="pointer-events-none absolute -inset-px rounded-xl bg-gradient-to-br from-sky-100/0 via-sky-50/0 to-imt-blue/0 transition-all duration-500 group-hover:from-sky-100/40 group-hover:via-sky-50/20 group-hover:to-imt-blue/0"
+                className="pointer-events-none absolute -left-8 -top-8 h-24 w-24 rounded-full bg-white/70 blur-2xl transition-opacity duration-300 group-hover:opacity-90"
               />
 
-              <div className="relative overflow-hidden rounded-lg bg-sky-50/40">
+              <div className="relative overflow-hidden rounded-lg bg-white/60 ring-1 ring-inset ring-sky-200/60">
                 <ProductImageFrame
                   src={c.image}
                   alt={c.name}
