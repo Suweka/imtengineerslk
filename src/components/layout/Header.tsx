@@ -58,13 +58,13 @@ export function Header() {
       }`}
     >
       <TopBar />
-      <div className="mx-auto flex h-[50px] max-w-[1600px] items-center justify-between gap-4 px-4 py-0 sm:h-auto sm:px-6 sm:py-3">
+      <div className="mx-auto flex h-[58px] max-w-[1600px] items-center justify-between gap-4 px-4 py-0 sm:h-auto sm:px-6 sm:py-4">
         <div className="flex items-center gap-2 sm:gap-3">
           <button className="text-slate-700 lg:hidden" aria-label="Menu" onClick={() => setMobileOpen((v) => !v)}>
             <Icon name="menu" size={20} />
           </button>
           <Link href="/" className="flex items-center gap-2">
-            <div className="relative h-[45px] w-[164px] sm:h-11 sm:w-[161px]">
+            <div className="relative h-[50px] w-[182px] sm:h-12 sm:w-[176px]">
               <Image
                 src="/logo.png"
                 alt="IMT Engineers Logo"
