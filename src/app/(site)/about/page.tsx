@@ -12,10 +12,17 @@ export default function AboutPage() {
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Since {siteSettings.foundedYear}</p>
             <h1 className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">About IMT Engineers</h1>
+            <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-imt-red">
+              Engineering Comfort. Building Trust.
+            </p>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              IMT Engineers (Pvt) Ltd has been selling, installing and servicing domestic and central air conditioners
-              across Sri Lanka since {siteSettings.foundedYear}. We work directly with leading brands and install every
-              unit with our own in-house engineering team — not subcontractors.
+              IMT Engineers (Pvt) Ltd is committed to building a professional and trusted name in the air-conditioning
+              industry by combining engineering knowledge, quality products, skilled people, disciplined processes and
+              customer-focused service.
+            </p>
+            <p className="mt-4 text-sm leading-relaxed text-slate-600">
+              Our responsibility does not end when an AC is sold or installed. We believe true service begins with
+              understanding the customer&apos;s requirement and continues throughout the equipment&apos;s useful life.
             </p>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
               Our head office is based in Karandeniya, with an engineering department in Moratuwa serving the greater
@@ -23,6 +30,48 @@ export default function AboutPage() {
             </p>
           </div>
           <ProductImageFrame alt="IMT Engineers team" label="IMT Engineers team" className="aspect-[4/3] w-full" />
+        </div>
+      </section>
+
+      <section className="bg-slate-50 py-14">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <h2 className="text-lg font-extrabold uppercase tracking-wide text-imt-red">Our Vision</h2>
+              <p className="mt-3 text-sm italic leading-relaxed text-slate-600">
+                &ldquo;To become a leading and trusted air-conditioning and engineering solutions brand, recognized
+                for technical excellence, quality, innovation and exceptional customer experience.&rdquo;
+              </p>
+            </div>
+            <div className="rounded-xl border border-slate-200 bg-white p-6">
+              <h2 className="text-lg font-extrabold uppercase tracking-wide text-imt-red">Our Mission</h2>
+              <p className="mt-3 text-sm italic leading-relaxed text-slate-600">
+                &ldquo;To consistently deliver the right solution, the right workmanship and the right support
+                through skilled professionals, quality systems and continuous improvement.&rdquo;
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-14">
+        <div className="mx-auto max-w-[1600px] px-4 sm:px-6">
+          <h2 className="text-center text-2xl font-extrabold text-slate-900">Corporate Identity</h2>
+          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              { title: "Who We Are", body: "A trusted Air-Conditioning & Engineering Solutions Company." },
+              { title: "What We Do", body: "Sales, Installation, Service, Maintenance and Commercial Solutions." },
+              { title: "Why We Exist", body: "To create better environments through reliable cooling." },
+              { title: "What We Believe", body: "Trust, Quality, Honesty, Safety and Professionalism." },
+              { title: "What We Promise", body: "Your comfort is our responsibility." },
+              { title: "What We Want To Become", body: "A trusted and respected engineering brand in Sri Lanka." },
+            ].map((f) => (
+              <div key={f.title} className="rounded-xl border border-slate-200 bg-white p-5">
+                <h3 className="font-semibold text-slate-900">{f.title}</h3>
+                <p className="mt-1 text-sm text-slate-500">{f.body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 

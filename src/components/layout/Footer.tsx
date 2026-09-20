@@ -13,7 +13,10 @@ export function Footer() {
               <Image src="/logo.png" alt="IMT Engineers Logo" fill className="object-contain" />
             </div>
           </div>
-          <p className="text-sm leading-relaxed text-slate-400">
+          <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-imt-red">
+            Engineering Comfort. Building Trust.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-slate-400">
             Air conditioning sales, installation and after-sales service across Sri Lanka since {siteSettings.foundedYear}.
           </p>
         </div>
