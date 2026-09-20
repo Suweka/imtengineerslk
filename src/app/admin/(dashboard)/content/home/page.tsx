@@ -8,7 +8,7 @@ import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Button } from "@/components/ui/Button";
 
 const initialHero = {
-  eyebrow: "Stay Cool. Stay Comfortable.",
+  eyebrow: "Engineering Comfort. Building Trust.",
   title: "Premium Air Conditioners for Your Perfect Comfort",
   subtitle: "Choose from the best brands with energy-efficient cooling, professional installation and reliable after-sales service.",
   primaryCta: "Shop Now",

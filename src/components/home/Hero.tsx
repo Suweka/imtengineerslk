@@ -28,7 +28,7 @@ export function Hero() {
         <CursorSpotlight className="mx-auto h-full max-w-[1600px] px-4 sm:px-6 lg:flex lg:h-full lg:items-center">
           <div className="max-w-[470px] py-8 lg:max-w-[700px] lg:py-0">
             <p className="mb-3.5 animate-fade-in-up text-[13px] font-semibold opacity-0 lg:text-lg">
-              <span className="text-imt-red">Stay Cool.</span> <span className="text-imt-blue">Stay Comfortable.</span>
+              <span className="text-imt-red">Engineering Comfort.</span> <span className="text-imt-blue">Building Trust.</span>
             </p>
             <h1
               className="mb-3.5 animate-fade-in-up text-[27px] font-semibold leading-[1.2] text-[#0F3E6B] opacity-0 [animation-delay:80ms] lg:whitespace-nowrap lg:text-[44px] lg:leading-[1.14]"
