@@ -40,7 +40,7 @@ export function InstallationBand() {
           </div>
         </div>
         <ProductImageFrame
-          src="/technician-installing.jpg.png"
+          src="/technician-installing.png"
           alt="Technician installing a unit"
           label="Technician installing a unit"
           className="aspect-[4/3] w-full"
