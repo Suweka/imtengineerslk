@@ -171,7 +171,7 @@ export default function OrderConfirmationPage({ params }: { params: Promise<{ id
 function WhatsAppButton({ order }: { order: Order }) {
   const itemsText = order.items.map(item => `${item.qty}x ${item.name}`).join(", ");
   const message = `Hi, my order number is ${order.orderNumber}. I would like to order: ${itemsText}. Total: LKR ${order.total}`;
-  const whatsappLink = `https://wa.me/94766644460?text=${encodeURIComponent(message)}`;
+  const whatsappLink = `https://wa.me/94766653639?text=${encodeURIComponent(message)}`;
   
   return (
     <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg bg-green-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-green-600 transition-colors">

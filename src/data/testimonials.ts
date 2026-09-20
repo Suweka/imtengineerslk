@@ -25,8 +25,8 @@ export const testimonials: Testimonial[] = [
 ];
 
 export const siteSettings = {
-  phone: "0766644460",
-  whatsapp: "0766644460",
+  phone: "0766653639",
+  whatsapp: "0766653639",
   email: "imtengineersmd@gmail.com",
   headOfficeAddress: "59/A Panapitiya, Karandeniya",
   engineeringDeptAddress: "222 Egodauyana, Modara, Moratuwa",
