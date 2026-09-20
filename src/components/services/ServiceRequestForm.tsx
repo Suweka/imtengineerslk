@@ -11,13 +11,34 @@ export function ServiceRequestForm({ service }: { service: ServiceType }) {
   const [address, setAddress] = useState("");
   const [preferredDate, setPreferredDate] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name || !phone || !address) return;
-    // TODO (backend): POST /api/service-requests — save to DB, then push to WhatsApp.
-    // DB write must succeed independently of the WhatsApp push result.
-    setSubmitted(true);
+
+    setSubmitting(true);
+    setError("");
+    try {
+      const res = await fetch("/api/service-requests", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: service.name,
+          customerName: name,
+          phone,
+          address,
+          preferredDate: preferredDate || null,
+        }),
+      });
+      if (!res.ok) throw new Error("Request failed");
+      setSubmitted(true);
+    } catch {
+      setError("Something went wrong. Please try again or call us directly.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   if (submitted) {
@@ -43,7 +64,10 @@ export function ServiceRequestForm({ service }: { service: ServiceType }) {
           Preferred date
           <input type="date" value={preferredDate} onChange={(e) => setPreferredDate(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
         </label>
-        <Button type="submit" className="w-full">Request Service</Button>
+        {error && <p className="text-xs text-red-600">{error}</p>}
+        <Button type="submit" className="w-full" disabled={submitting}>
+          {submitting ? "Submitting…" : "Request Service"}
+        </Button>
       </form>
     </GlassPanel>
   );
