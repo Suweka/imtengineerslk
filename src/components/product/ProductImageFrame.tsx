@@ -9,12 +9,14 @@ export function ProductImageFrame({
   label,
   className = "",
   priority,
+  fit = "contain",
 }: {
   src?: string;
   alt: string;
   label?: string;
   className?: string;
   priority?: boolean;
+  fit?: "contain" | "cover";
 }) {
   const [loaded, setLoaded] = useState(false);
 
@@ -32,7 +34,7 @@ export function ProductImageFrame({
             alt={alt}
             fill
             priority={priority}
-            className={`object-contain p-4 transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
+            className={`${fit === "cover" ? "object-cover" : "object-contain p-4"} transition-opacity duration-500 ${loaded ? "opacity-100" : "opacity-0"}`}
             onLoad={() => setLoaded(true)}
           />
         </>

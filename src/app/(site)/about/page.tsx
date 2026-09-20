@@ -29,7 +29,13 @@ export default function AboutPage() {
               Colombo area and beyond.
             </p>
           </div>
-          <ProductImageFrame alt="IMT Engineers team" label="IMT Engineers team" className="aspect-[4/3] w-full" />
+          <ProductImageFrame
+            src="/team.png"
+            alt="IMT Engineers team"
+            label="IMT Engineers team"
+            className="aspect-[4/3] w-full"
+            fit="cover"
+          />
         </div>
       </section>
 

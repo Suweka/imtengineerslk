@@ -44,6 +44,7 @@ export function InstallationBand() {
           alt="Technician installing a unit"
           label="Technician installing a unit"
           className="aspect-[4/3] w-full"
+          fit="cover"
         />
       </div>
     </section>
