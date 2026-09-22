@@ -6,7 +6,7 @@ import { getBrandById } from "@/data/brands";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Button } from "@/components/ui/Button";
-import { homeHeroDefault, HomeHeroContent } from "@/lib/page-content";
+import { homeHeroDefault, HomeHeroContent } from "@/lib/page-content-defaults";
 
 export default function AdminHomeContentPage() {
   const [hero, setHero] = useState(homeHeroDefault);

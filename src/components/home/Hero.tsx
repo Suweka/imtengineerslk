@@ -5,7 +5,7 @@ import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { CursorSpotlight } from "@/components/ui/CursorSpotlight";
 import { siteSettings } from "@/data/testimonials";
 import { brands } from "@/data/brands";
-import { homeHeroDefault, HomeHeroContent } from "@/lib/page-content";
+import { homeHeroDefault, HomeHeroContent } from "@/lib/page-content-defaults";
 
 const heroCards = [
   { icon: "local_shipping", title: "Free Delivery", sub: "Islandwide" },

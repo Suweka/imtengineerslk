@@ -1,5 +1,5 @@
 import { Icon } from "@/components/ui/Icon";
-import { homeHeroDefault } from "@/lib/page-content";
+import { homeHeroDefault } from "@/lib/page-content-defaults";
 
 const iconStyle = [
   { icon: "ac_unit", color: "#1C75BC" },

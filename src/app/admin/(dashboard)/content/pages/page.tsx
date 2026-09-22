@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Button } from "@/components/ui/Button";
-import { pageContentDefaults } from "@/lib/page-content";
+import { pageContentDefaults } from "@/lib/page-content-defaults";
 
 type PageContent = { key: string; label: string; title: string; body: string };
 
