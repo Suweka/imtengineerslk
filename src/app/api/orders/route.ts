@@ -1,12 +1,31 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { sendOrderNotification } from "@/lib/whatsapp";
+import { sendOrderNotification } from "@/lib/callmebot";
 import { sendOrderOwnerAlert } from "@/lib/email";
+
+const validFulfillments = ["delivery", "showroom-pickup"];
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+
+    if (!Array.isArray(body.items) || body.items.length === 0) {
+      return Response.json({ error: "items is required" }, { status: 400 });
+    }
+    if (typeof body.subtotal !== "number" || typeof body.total !== "number") {
+      return Response.json({ error: "subtotal and total are required" }, { status: 400 });
+    }
+    if (!validFulfillments.includes(body.fulfillment)) {
+      return Response.json({ error: "fulfillment must be 'delivery' or 'showroom-pickup'" }, { status: 400 });
+    }
+    if (!body.customerName || typeof body.customerName !== "string") {
+      return Response.json({ error: "customerName is required" }, { status: 400 });
+    }
+    if (!body.phone || typeof body.phone !== "string") {
+      return Response.json({ error: "phone is required" }, { status: 400 });
+    }
+
     const session = await getServerSession(authOptions);
     const userId = session?.user?.role === "customer" ? session.user.id : undefined;
 

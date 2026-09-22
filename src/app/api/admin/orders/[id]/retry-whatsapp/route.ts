@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma";
-import { sendOrderNotification } from "@/lib/whatsapp";
+import { sendOrderNotification } from "@/lib/callmebot";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
-  if (!session) return Response.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session || session.user.role !== "admin") return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const { id } = await params;

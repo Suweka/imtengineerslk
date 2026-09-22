@@ -1,10 +1,23 @@
 import { prisma } from "@/lib/prisma";
-import { sendServiceRequestNotification } from "@/lib/whatsapp";
+import { sendServiceRequestNotification } from "@/lib/callmebot";
 import { sendServiceRequestOwnerAlert } from "@/lib/email";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
+
+    if (!body.type || typeof body.type !== "string") {
+      return Response.json({ error: "type is required" }, { status: 400 });
+    }
+    if (!body.customerName || typeof body.customerName !== "string") {
+      return Response.json({ error: "customerName is required" }, { status: 400 });
+    }
+    if (!body.phone || typeof body.phone !== "string") {
+      return Response.json({ error: "phone is required" }, { status: 400 });
+    }
+    if (!body.address || typeof body.address !== "string") {
+      return Response.json({ error: "address is required" }, { status: 400 });
+    }
 
     const serviceRequest = await prisma.serviceRequest.create({
       data: {
