@@ -1,33 +1,28 @@
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 import { siteSettings } from "@/data/testimonials";
 import { InfoBar, trustItems } from "@/components/home/InfoBar";
+import { getPageContent } from "@/lib/page-content";
 
 export const metadata = { title: "About Us | IMT Engineers" };
+export const dynamic = "force-dynamic";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const content = await getPageContent("about");
   return (
     <>
       <section className="mx-auto max-w-[1600px] px-4 py-12 sm:px-6">
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2">
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Since {siteSettings.foundedYear}</p>
-            <h1 className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">About IMT Engineers</h1>
+            <h1 className="mt-2 text-3xl font-extrabold text-slate-900 sm:text-4xl">{content.title}</h1>
             <p className="mt-1 text-sm font-semibold uppercase tracking-wide text-imt-red">
               Engineering Comfort. Building Trust.
             </p>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              IMT Engineers (Pvt) Ltd is committed to building a professional and trusted name in the air-conditioning
-              industry by combining engineering knowledge, quality products, skilled people, disciplined processes and
-              customer-focused service.
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              Our responsibility does not end when an AC is sold or installed. We believe true service begins with
-              understanding the customer&apos;s requirement and continues throughout the equipment&apos;s useful life.
-            </p>
-            <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              Our head office is based in Karandeniya, with an engineering department in Moratuwa serving the greater
-              Colombo area and beyond.
-            </p>
+            {content.body.split("\n\n").map((paragraph, i) => (
+              <p key={i} className="mt-4 text-sm leading-relaxed text-slate-600">
+                {paragraph}
+              </p>
+            ))}
           </div>
           <ProductImageFrame
             src="/team.png"

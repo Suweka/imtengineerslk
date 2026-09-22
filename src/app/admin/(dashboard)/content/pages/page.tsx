@@ -1,43 +1,47 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Button } from "@/components/ui/Button";
+import { pageContentDefaults } from "@/lib/page-content";
 
 type PageContent = { key: string; label: string; title: string; body: string };
 
-const initialPages: PageContent[] = [
-  {
-    key: "about",
-    label: "About Us",
-    title: "About IMT Engineers",
-    body: "IMT Engineers (Pvt) Ltd has been selling, installing and servicing domestic and central air conditioners across Sri Lanka since 2006. We work directly with leading brands and install every unit with our own in-house engineering team — not subcontractors.",
-  },
-  {
-    key: "installation",
-    label: "Installation",
-    title: "Fitted by our own engineers, not a subcontractor.",
-    body: "Every unit we sell can be installed by an IMT-certified team, islandwide, within three working days. Annual maintenance contracts keep it running at rated efficiency.",
-  },
-  {
-    key: "room-size-guide",
-    label: "Room Size Guide",
-    title: "Room Size Guide",
-    body: "Choosing the right capacity keeps your unit running efficiently — undersized units run constantly and wear out faster, while oversized units cool too quickly without properly dehumidifying the room.",
-  },
-  {
-    key: "services",
-    label: "Services",
-    title: "Keep your units running at their best",
-    body: "From gas refills to full relocations, our engineers handle it — islandwide.",
-  },
-];
+const pageLabels: Record<string, string> = {
+  about: "About Us",
+  installation: "Installation",
+  "room-size-guide": "Room Size Guide",
+  services: "Services",
+};
+
+const initialPages: PageContent[] = Object.entries(pageContentDefaults).map(([key, v]) => ({
+  key,
+  label: pageLabels[key] ?? key,
+  title: v.title,
+  body: v.body,
+}));
 
 export default function AdminPagesContentPage() {
   const [pages, setPages] = useState(initialPages);
   const [activeKey, setActiveKey] = useState(pages[0].key);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/admin/content")
+      .then((res) => res.json())
+      .then((rows: { pageKey: string; title: string | null; body: string }[]) => {
+        setPages((prev) =>
+          prev.map((p) => {
+            const row = rows.find((r) => r.pageKey === p.key);
+            return row ? { ...p, title: row.title ?? p.title, body: row.body } : p;
+          })
+        );
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const active = pages.find((p) => p.key === activeKey)!;
 
@@ -45,16 +49,25 @@ export default function AdminPagesContentPage() {
     setPages((prev) => prev.map((p) => (p.key === activeKey ? { ...p, [field]: value } : p)));
   }
 
-  function handleSave() {
-    // TODO (backend): PATCH /api/admin/content/[pageKey]
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  async function handleSave() {
+    setSaving(true);
+    try {
+      await fetch("/api/admin/content", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pageKey: active.key, title: active.title, body: active.body }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <>
-      <AdminTopbar title="Site Pages" subtitle="Editable text blocks for About, Installation, Room Size Guide and Services" actions={<Button onClick={handleSave}>{saved ? "Saved ✓" : "Save changes"}</Button>} />
-      <PreviewBanner />
+      <AdminTopbar title="Site Pages" subtitle="Editable text blocks for About, Installation, Room Size Guide and Services" actions={<Button onClick={handleSave} disabled={loading || saving}>{saved ? "Saved ✓" : saving ? "Saving…" : "Save changes"}</Button>} />
+      <PreviewBanner>Changes here save live and appear on the public site immediately.</PreviewBanner>
 
       <div className="flex flex-1 gap-6 p-6">
         <div className="w-56 shrink-0 space-y-1">

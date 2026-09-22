@@ -6,28 +6,16 @@ import { getBrandById } from "@/data/brands";
 import { AdminTopbar } from "@/components/admin/AdminTopbar";
 import { PreviewBanner } from "@/components/admin/PreviewBanner";
 import { Button } from "@/components/ui/Button";
-
-const initialHero = {
-  eyebrow: "Engineering Comfort. Building Trust.",
-  title: "Premium Air Conditioners for Your Perfect Comfort",
-  subtitle: "Choose from the best brands with energy-efficient cooling, professional installation and reliable after-sales service.",
-  primaryCta: "Shop Now",
-  secondaryCta: "View Deals",
-};
-
-const initialValueProps = [
-  { title: "Cooling Performance", subtitle: "Powerful & Fast Cooling" },
-  { title: "Energy Efficient", subtitle: "Save More on Bills" },
-  { title: "Quiet Operation", subtitle: "Peaceful Comfort" },
-  { title: "Trusted Brands", subtitle: "100% Genuine Products" },
-];
+import { homeHeroDefault, HomeHeroContent } from "@/lib/page-content";
 
 export default function AdminHomeContentPage() {
-  const [hero, setHero] = useState(initialHero);
-  const [valueProps, setValueProps] = useState(initialValueProps);
+  const [hero, setHero] = useState(homeHeroDefault);
+  const [valueProps, setValueProps] = useState(homeHeroDefault.valueProps);
   const [products, setProducts] = useState<Product[]>([]);
   const [loadingProducts, setLoadingProducts] = useState(true);
+  const [loadingContent, setLoadingContent] = useState(true);
   const [savingFeatured, setSavingFeatured] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -35,6 +23,18 @@ export default function AdminHomeContentPage() {
       .then((res) => res.json())
       .then((data) => setProducts(data))
       .finally(() => setLoadingProducts(false));
+
+    fetch("/api/admin/content")
+      .then((res) => res.json())
+      .then((rows: { pageKey: string; body: string }[]) => {
+        const row = rows.find((r) => r.pageKey === "home-hero");
+        if (row) {
+          const parsed: HomeHeroContent = { ...homeHeroDefault, ...JSON.parse(row.body) };
+          setHero(parsed);
+          setValueProps(parsed.valueProps);
+        }
+      })
+      .finally(() => setLoadingContent(false));
   }, []);
 
   async function toggleFeatured(product: Product) {
@@ -52,17 +52,26 @@ export default function AdminHomeContentPage() {
     }
   }
 
-  function handleSave() {
-    // TODO (backend): PATCH /api/admin/content/home-hero — hero copy and
-    // value props aren't stored anywhere yet; this section stays preview-only.
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+  async function handleSave() {
+    setSaving(true);
+    try {
+      const content: HomeHeroContent = { ...hero, valueProps };
+      await fetch("/api/admin/content", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pageKey: "home-hero", body: JSON.stringify(content) }),
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <>
-      <AdminTopbar title="Home Page" subtitle="Hero banner, value props and best-seller picks" actions={<Button onClick={handleSave}>{saved ? "Saved ✓" : "Save changes"}</Button>} />
-      <PreviewBanner>Hero banner and value props below are held in local state only for this preview. Best-seller picks save live to the database.</PreviewBanner>
+      <AdminTopbar title="Home Page" subtitle="Hero banner, value props and best-seller picks" actions={<Button onClick={handleSave} disabled={loadingContent || saving}>{saved ? "Saved ✓" : saving ? "Saving…" : "Save changes"}</Button>} />
+      <PreviewBanner>Changes here save live and appear on the homepage immediately. Best-seller picks save live to the database.</PreviewBanner>
 
       <div className="flex-1 space-y-6 p-6">
         <section className="rounded-xl border border-slate-200 bg-white p-5">
@@ -71,7 +80,10 @@ export default function AdminHomeContentPage() {
             <Field label="Eyebrow text" value={hero.eyebrow} onChange={(v) => setHero({ ...hero, eyebrow: v })} />
             <Field label="Primary button label" value={hero.primaryCta} onChange={(v) => setHero({ ...hero, primaryCta: v })} />
             <div className="sm:col-span-2">
-              <Field label="Headline" value={hero.title} onChange={(v) => setHero({ ...hero, title: v })} />
+              <label className="block text-xs text-slate-600">
+                Headline (add a line break to split it into two styled lines)
+                <textarea value={hero.title} onChange={(e) => setHero({ ...hero, title: e.target.value })} rows={2} className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm" />
+              </label>
             </div>
             <div className="sm:col-span-2">
               <label className="block text-xs text-slate-600">

@@ -1,13 +1,16 @@
 import { Icon } from "@/components/ui/Icon";
+import { homeHeroDefault } from "@/lib/page-content";
 
-const items = [
-  { icon: "ac_unit", color: "#1C75BC", title: "Cooling Performance", subtitle: "Powerful & Fast Cooling" },
-  { icon: "eco", color: "#2FA84F", title: "Energy Efficient", subtitle: "Save More on Bills" },
-  { icon: "build", color: "#F7941D", title: "Expert Installation", subtitle: "Certified Technicians" },
-  { icon: "verified_user", color: "#1C75BC", title: "Trusted Brands", subtitle: "100% Genuine Products" },
+const iconStyle = [
+  { icon: "ac_unit", color: "#1C75BC" },
+  { icon: "eco", color: "#2FA84F" },
+  { icon: "build", color: "#F7941D" },
+  { icon: "verified_user", color: "#1C75BC" },
 ];
 
-export function ValueProps() {
+export function ValueProps({ valueProps = homeHeroDefault.valueProps }: { valueProps?: { title: string; subtitle: string }[] }) {
+  const items = valueProps.map((v, i) => ({ ...v, ...iconStyle[i % iconStyle.length] }));
+
   return (
     <section className="relative px-0 lg:px-6">
       <div className="grid grid-cols-2 border-b border-slate-100 bg-white lg:grid-cols-4 lg:rounded-xl lg:border-0 lg:shadow-[0_6px_24px_rgba(23,43,58,.10)]">

@@ -1,18 +1,19 @@
 import Link from "next/link";
 import { serviceTypes } from "@/data/services";
 import { InfoBar, trustItems } from "@/components/home/InfoBar";
+import { getPageContent } from "@/lib/page-content";
 
 export const metadata = { title: "Services | IMT Engineers" };
+export const dynamic = "force-dynamic";
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+  const content = await getPageContent("services");
   return (
     <>
       <section className="mx-auto max-w-[1600px] px-4 py-12 text-center sm:px-6">
         <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Services &amp; AMC</p>
-        <h1 className="mt-2 text-3xl font-extrabold text-slate-900">Keep your units running at their best</h1>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-slate-500">
-          From gas refills to full relocations, our engineers handle it — islandwide.
-        </p>
+        <h1 className="mt-2 text-3xl font-extrabold text-slate-900">{content.title}</h1>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-slate-500">{content.body}</p>
 
         <div className="mt-10 grid grid-cols-1 gap-5 text-left sm:grid-cols-2 lg:grid-cols-3">
           {serviceTypes.map((s) => (

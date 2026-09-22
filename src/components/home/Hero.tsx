@@ -5,6 +5,7 @@ import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
 import { CursorSpotlight } from "@/components/ui/CursorSpotlight";
 import { siteSettings } from "@/data/testimonials";
 import { brands } from "@/data/brands";
+import { homeHeroDefault, HomeHeroContent } from "@/lib/page-content";
 
 const heroCards = [
   { icon: "local_shipping", title: "Free Delivery", sub: "Islandwide" },
@@ -14,7 +15,11 @@ const heroCards = [
 
 const yearsInBusiness = new Date().getFullYear() - siteSettings.foundedYear;
 
-export function Hero() {
+export function Hero({ content = homeHeroDefault }: { content?: HomeHeroContent }) {
+  const [titleLine1, titleLine2] = content.title.includes("\n")
+    ? content.title.split("\n")
+    : [content.title, ""];
+
   return (
     <>
       <section className="relative overflow-hidden bg-[#F7F9FC] lg:h-[430px] lg:bg-[#DCEAF3]">
@@ -27,21 +32,22 @@ export function Hero() {
         <div className="pointer-events-none absolute -left-24 top-1/2 hidden h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-imt-blue/10 blur-3xl lg:block" />
         <CursorSpotlight className="mx-auto h-full max-w-[1600px] px-4 sm:px-6 lg:flex lg:h-full lg:items-center">
           <div className="max-w-[470px] py-8 lg:max-w-[700px] lg:py-0">
-            <p className="mb-3.5 animate-fade-in-up text-[13px] font-semibold opacity-0 lg:text-lg">
-              <span className="text-imt-red">Engineering Comfort.</span> <span className="text-imt-blue">Building Trust.</span>
+            <p className="mb-3.5 animate-fade-in-up text-[13px] font-semibold text-imt-blue opacity-0 lg:text-lg">
+              {content.eyebrow}
             </p>
             <h1
               className="mb-3.5 animate-fade-in-up text-[27px] font-semibold leading-[1.2] text-[#0F3E6B] opacity-0 [animation-delay:80ms] lg:whitespace-nowrap lg:text-[44px] lg:leading-[1.14]"
             >
-              Premium Air Conditioners
-              <br />
-              <span className="text-[22px] font-normal text-[#1E2B36] lg:text-[44px]">
-                for Your Perfect Comfort
-              </span>
+              {titleLine1}
+              {titleLine2 && (
+                <>
+                  <br />
+                  <span className="text-[22px] font-normal text-[#1E2B36] lg:text-[44px]">{titleLine2}</span>
+                </>
+              )}
             </h1>
             <p className="mb-5 max-w-[470px] animate-fade-in-up text-[13px] leading-[1.75] text-[#4A5A68] opacity-0 [animation-delay:160ms] lg:mb-[26px] lg:max-w-[600px] lg:text-sm lg:leading-[1.8]">
-              Choose from the best brands with energy-efficient cooling, professional installation and
-              reliable after-sales service.
+              {content.subtitle}
             </p>
             <div className="flex animate-fade-in-up flex-wrap gap-3 opacity-0 [animation-delay:240ms]">
               <ButtonLink
@@ -49,7 +55,7 @@ export function Hero() {
                 size="lg"
                 className="h-11 px-6 text-base shadow-[0_0_0_0_rgba(28,117,188,0.5)] hover:shadow-[0_0_24px_4px_rgba(28,117,188,0.35)] lg:h-[56px] lg:px-8 lg:text-lg"
               >
-                Shop Now <Icon name="arrow_forward" size={20} />
+                {content.primaryCta} <Icon name="arrow_forward" size={20} />
               </ButtonLink>
               <ButtonLink
                 href="/shop?discount=true"
@@ -57,7 +63,7 @@ export function Hero() {
                 variant="outline"
                 className="h-11 px-6 text-base lg:h-[56px] lg:px-8 lg:text-lg"
               >
-                View Deals <Icon name="sell" size={18} />
+                {content.secondaryCta} <Icon name="sell" size={18} />
               </ButtonLink>
             </div>
 

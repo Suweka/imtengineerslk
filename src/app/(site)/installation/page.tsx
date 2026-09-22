@@ -2,8 +2,10 @@ import { ButtonLink } from "@/components/ui/Button";
 import { ProductImageFrame } from "@/components/product/ProductImageFrame";
 import { siteSettings } from "@/data/testimonials";
 import { InfoBar, trustItems } from "@/components/home/InfoBar";
+import { getPageContent } from "@/lib/page-content";
 
 export const metadata = { title: "Installation | IMT Engineers" };
+export const dynamic = "force-dynamic";
 
 const steps = [
   { title: "Book a slot", body: "Choose installation as an add-on at checkout, or call us directly for an existing unit." },
@@ -19,7 +21,8 @@ const faqs = [
   { q: "Can I get an Annual Maintenance Contract?", a: "Yes — AMC plans start from LKR 14,500 a year and include scheduled servicing to keep your unit running at rated efficiency." },
 ];
 
-export default function InstallationPage() {
+export default async function InstallationPage() {
+  const content = await getPageContent("installation");
   return (
     <>
       <section className="mx-auto max-w-[1600px] px-4 py-12 sm:px-6">
@@ -27,12 +30,9 @@ export default function InstallationPage() {
           <div>
             <p className="text-xs font-bold uppercase tracking-wide text-imt-red">Installation &amp; Service</p>
             <h1 className="mt-2 text-3xl font-extrabold leading-tight text-slate-900 sm:text-4xl">
-              Fitted by our own engineers, not a subcontractor.
+              {content.title}
             </h1>
-            <p className="mt-4 text-sm text-slate-600">
-              Every unit we sell can be installed by an IMT-certified team, islandwide, within three working days.
-              Annual maintenance contracts keep it running at rated efficiency.
-            </p>
+            <p className="mt-4 text-sm text-slate-600">{content.body}</p>
             <div className="mt-6 flex flex-wrap gap-3">
               <ButtonLink href="/shop">Browse air conditioners →</ButtonLink>
               <a href={`tel:${siteSettings.phone}`} className="inline-flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2.5 text-sm font-semibold text-imt-navy hover:border-imt-blue">
