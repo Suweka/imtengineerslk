@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { sendOrderNotification } from "@/lib/callmebot";
+import { sendOrderNotification } from "@/lib/whatsapp";
 import { sendOrderOwnerAlert } from "@/lib/email";
 
 const validFulfillments = ["delivery", "showroom-pickup"];

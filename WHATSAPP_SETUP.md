@@ -1,7 +1,7 @@
 # WhatsApp Order Notification Setup
 
-This documents the current state of the WhatsApp order/service-request
-notification feature, why it wasn't working, and what's left to finish it.
+Documents how the WhatsApp order/service-request owner-notification
+feature is wired up, and the account/template setup it depends on.
 
 ## How the feature works
 
@@ -10,7 +10,7 @@ notification feature, why it wasn't working, and what's left to finish it.
 2. The API route (`src/app/api/orders/route.ts` or
    `src/app/api/service-requests/route.ts`) saves the record to the
    database, then calls `sendOrderNotification` /
-   `sendServiceRequestNotification` in `src/lib/whatsapp.ts`.
+   `sendServiceRequestNotification`.
 3. That function sends a WhatsApp **template message** via Meta's
    WhatsApp Business Cloud API to the number in `IMT_NOTIFY_NUMBER`.
 4. The send result (`sent` / `failed` / `skipped`) is stored on the
@@ -29,95 +29,101 @@ WHATSAPP_ORDER_TEMPLATE=neworderrecieved
 WHATSAPP_SERVICE_TEMPLATE=service_request_confirmation
 ```
 
-## What was broken
+## Current status
 
-- The original `WHATSAPP_API_TOKEN` had expired (Meta returned
-  `Authentication Error`, code 190).
-- The client (IMT Engineers) does not have their own Meta Business
-  account set up for this, and is non-technical, so a fresh token
-  couldn't be issued on their end.
-- The developer (Suweka) already has a Meta app called **IMT
-  Engineers** under their own **Ceylon Web House** Business Manager,
-  with full admin access — this is where the original token came from.
-- The client's real WhatsApp number (`766653639`) is already active
-  on the regular WhatsApp Business mobile app, so it can't be directly
-  re-registered to the Cloud API without migrating it first (which
-  would disconnect it from the phone's WhatsApp app).
+**Orders: live on Meta WhatsApp Business Cloud API.**
+`src/app/api/orders/route.ts` and the admin retry endpoint import
+`sendOrderNotification` from `src/lib/whatsapp.ts`, which sends via
+the approved `neworderrecieved` template. Confirmed working end to
+end (DB write → WhatsApp send → `whatsappStatus: "sent"`).
 
-## Current approach: Meta's free test number
+**Service requests: still on CallMeBot (interim).**
+`src/app/api/service-requests/route.ts` imports from
+`src/lib/callmebot.ts` because no service-request template has been
+created/approved yet — see "Next step" below to finish the migration.
 
-To unblock testing without migrating the client's live number or
-requiring the client to do anything technical, we're using the free
-test phone number Meta provisions automatically for every WhatsApp
-app:
+### Account structure (Meta)
 
-- Test number: `+1 (555) 202-9419`
-- Phone Number ID: `1216458268226442`
-- WhatsApp Business Account ID: `1616039806900915`
+Everything is set up under the **Ceylon Web House** Business Manager,
+which owns multiple WhatsApp Business Accounts (WABAs). The one
+actually in use is:
 
-Limitations of the test number:
+- WABA name: **IMT Engineers LK**
+- WABA ID: `2148042532756375`
+- Sender number: `+94 71 310 5075`
+- Phone Number ID: `1351385294722016`
+- Meta app: **IMT Engineers** (app ID `2113761125891940`)
+- Token: permanent System User token, scope
+  `whatsapp_business_messaging` + `whatsapp_business_management`
 
-- It can only send **template messages**.
-- It can only message phone numbers explicitly added to an **allowed
-  recipient list** in the Meta app (API Setup → "To" → Manage phone
-  number list). Each recipient must be verified via an OTP sent to
-  their WhatsApp number.
-- It has low daily/monthly sending limits — fine for verifying the
-  feature works, not for production volume.
+There are other WABAs under the same business (a plain "Ceylon Web
+House" WABA, and a "Test WhatsApp Business Account" using Meta's free
+test number) — these are not used by the app. If you're debugging
+account/permission issues, double-check which WABA a given phone
+number ID actually belongs to before assuming it's this one — an app
+can only send through a WABA its System User has been explicitly
+granted access to as an asset, even if the UI shows the number under
+a different WABA it can merely read.
 
-### Progress so far
+### Templates (must be created per-WABA, not per-app)
 
-1. ✅ Generated a new, working access token from the Ceylon Web House
-   Meta app (confirmed via direct `curl` call to the Graph API — no
-   more auth error).
-2. ❌ Sending to `94766653639` (IMT's real number) currently fails
-   with:
-   ```
-   (#131030) Recipient phone number not in allowed list
-   ```
-   because that number hasn't been added as an allowed test recipient
-   yet.
+Templates aren't visible/usable across WABAs even under the same
+Business Manager or app — each WABA needs its own approved copy.
 
-### Next step
+| Template | WABA `2148042532756375` (IMT Engineers LK, in use) |
+|---|---|
+| `neworderrecieved` | ✅ Approved |
+| `service_request_confirmation` | ❌ Not created yet |
 
-In the Meta app dashboard → **WhatsApp → API Setup**:
+`neworderrecieved` body (7 variables — customer, order number, items,
+total, fulfillment, installation, phone):
 
-1. Under **"To"**, click **Manage phone number list** → **Add
-   recipient phone number**.
-2. Enter `+94 766653639`.
-3. Meta sends an OTP to that WhatsApp number — whoever has access to
-   that phone needs to read back the code to complete verification.
-4. Once verified, re-run the test send (see `Testing` below) to
-   confirm delivery.
+```
+📦 New Order Received
 
-## Long-term / production considerations
+A new order has just been placed on the IMT Engineers website.
 
-The test number is not meant for production:
+Customer: {{1}}
+Order Number: {{2}}
+Items Ordered: {{3}}
+Order Total: {{4}}
+Delivery Method: {{5}}
+Installation Requested: {{6}}
+Customer Phone: {{7}}
 
-- Sending is capped and requires manual allow-listing of every
-  recipient, which doesn't scale to real customers receiving
-  confirmations (if that's ever added) — though currently only the
-  **owner notification** number needs to be allow-listed, since
-  customers aren't sent WhatsApp messages by this flow.
-- For the owner-notification use case specifically (only one
-  recipient — IMT's number), the test number setup above is actually
-  workable indefinitely once `766653639` is allow-listed, since Meta
-  doesn't currently require production number verification just to
-  message a single allow-listed number.
-- If IMT's number ever needs to be the **sender** (e.g. for two-way
-  customer chat via API, or to remove the "test number" branding from
-  outgoing messages), it will need to be migrated from the WhatsApp
-  Business mobile app to the Cloud API. This is done from the phone:
-  **WhatsApp Business app → Settings → Business tools → Migrate to
-  Cloud API**, selecting this Meta app/Business Manager as the
-  destination. This disconnects the number from the mobile app
-  afterward — confirmed with the client that this number is only used
-  for automated alerts, not manual customer chats, so this is safe to
-  do when needed.
-- The permanent token should come from a **System User** (Business
-  Settings → Users → System Users → generate token, no expiry,
-  `whatsapp_business_messaging` permission) rather than a temporary
-  24-hour token, so it doesn't need to be regenerated repeatedly.
+Please review and process this order as soon as possible.
+```
+
+### Next step: approve a service-request template
+
+To move service requests off CallMeBot and onto Meta too:
+
+1. In Meta Business Suite → **WhatsApp Manager** → select the
+   **IMT Engineers LK** account → **Message Templates** → Create
+   Template.
+2. Name it `service_request_confirmation`, category **Utility**,
+   language English. Body needs static text at both ends and enough
+   context per variable (Meta rejects templates that are mostly
+   variables) — match the 4 params `sendServiceRequestNotification`
+   in `src/lib/whatsapp.ts` already sends (type, customer, phone,
+   address, preferred date — check that function for the exact order
+   before wording the template).
+3. Submit and wait for approval (usually minutes to a few hours for
+   Utility templates).
+4. Once approved, swap the import in
+   `src/app/api/service-requests/route.ts` from
+   `@/lib/callmebot` to `@/lib/whatsapp`.
+5. Re-test with the curl command below before relying on it.
+
+## CallMeBot fallback (service requests only, for now)
+
+`src/lib/callmebot.ts` sends plain-text messages via CallMeBot's free
+API — no Meta template/approval needed, but IMT's number must opt in
+once: WhatsApp `I allow callmebot to send me messages` to
+`+34 644 51 95 23` from `766653639`, then the API key it replies with
+goes in `.env.local` as `CALLMEBOT_API_KEY`. Keep this only as a
+stopgap; the Meta path is the permanent one once the template above is
+approved.
 
 ## Testing manually with curl
 
@@ -158,4 +164,13 @@ curl -s -X POST "https://graph.facebook.com/v20.0/${PHONE_ID}/messages" \
 A successful send returns a JSON body with a `messages` array
 containing a `wamid...` message ID. An error returns an `error` object
 with a `code` and `message` explaining what's wrong (auth, template,
-recipient allow-list, etc).
+recipient allow-list, permissions, etc). Common ones seen while
+setting this up:
+
+- `code 190` — token expired/invalid.
+- `code 132001` "Template name does not exist in the translation" —
+  right template name, wrong WABA (or wrong language code).
+- `code 100` "Authorization Error" — token can read the phone number
+  but its System User hasn't been granted send access to that WABA as
+  an asset; generate a fresh token and make sure the correct WABA is
+  included in its asset access.
